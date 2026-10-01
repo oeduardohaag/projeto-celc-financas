@@ -4,19 +4,27 @@
 ![React](https://img.shields.io/badge/-React-45b8d8?style=flat-square&logo=react&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=white)
 
-O **CELC FINANÇAS** é um sistema web de gestão financeira desenvolvido como projeto acadêmico, com o objetivo de auxiliar na organização, controle e acompanhamento das movimentações financeiras de uma instituição religiosa.
+O **CELC FINANÇAS** é um sistema web de gestão financeira desenvolvido como projeto acadêmico, com o objetivo de auxiliar na organização, controle e acompanhamento das movimentações financeiras da Comunidade Evangélica Luterana de Criciúma.
 A aplicação busca proporcionar maior praticidade e transparência na gestão dos recursos, permitindo o registro e acompanhamento de receitas e despesas de forma organizada e centralizada.
+
+# Funcionalidades
+**1. 👪 Gestão dos membros da igreja: Cadastro de membros com validações de CPF.**
+
+**2. 📊 Dashboard Interativo: Exibição de cards e gráficos visuais de entraxa e saídas.**
+
+**3. 💰 Controle Financeiro: Registro detalhado de Contas, Dízimos e Ofertas.**
+# Tecnologias Utilizadas 🖥️
 
 ### **Back-end:** Node.js
 
-- node-postgres (`pg`)--> Conexão com o Banco de Dados PostgreSQL.
-- express.js --> Construção do Servidor da aplicação.
+- node-postgres (`pg`)--> Conexão com o banco de dados PostgreSQL.
+- express.js --> Construção do servidor da aplicação.
 - CORS --> Gerenciamento de requisições entre Front-end e Back-end.
 - dotenv --> Leitura das variáveis de ambiente.
-- jsonwebtoken --> Gerar um token de identificação para manter o usuário conectado durante o uso do sistema.
+- jsonwebtoken --> Gerar um token de identificação para manter o usuário conectado durante sua navegação pelo sistema.
 - bcryptjs --> Hashear as senhas dos usuários.
 - zod --> Validação de dados.
-- dayjs -->Manipulação de datas.
+- dayjs --> Manipulação de datas.
 
 ### **Front-end:** React
 
@@ -30,16 +38,8 @@ A aplicação busca proporcionar maior praticidade e transparência na gestão d
 - PostgreSQL
 - Gerenciador de Pacotes npm
 
-# Funcionalidades
-
-### 1. 👪 Gestão dos membros da igreja: Cadastro de membros com validações de CPF.
-
-### 2. 📊 Dashboard Interativo: Exibição de cards e gráficos visuais de entraxa e saídas.
-
-### 3. 💰 Controle Financeiro: Registro detalhado de Contas, Dízimos e Ofertas.
-
 ## Como Executar Localmente
-* Obs: Nosso projeto ainda está em andamento, então o repositório não conterá todos os seus respectivos arquivos.
+* Obs: Nosso projeto ainda está em andamento, então o repositório não conterá todos os arquivos para o seu pleno funcionamento.
   
 ### 1º Passo --> Configurar o Banco de Dados
 1. Criar um novo Banco de Dados no PostgreSQL com o nome de (`celc_financas`).
