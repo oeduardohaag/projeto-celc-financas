@@ -7,12 +7,82 @@
 O **CELC FINANÇAS** é um sistema web de gestão financeira desenvolvido como projeto acadêmico, com o objetivo de auxiliar na organização, controle e acompanhamento das movimentações financeiras de uma instituição religiosa.
 A aplicação busca proporcionar maior praticidade e transparência na gestão dos recursos, permitindo o registro e acompanhamento de receitas e despesas de forma organizada e centralizada.
 
-## Tecnologias Utilizadas
+### **Back-end:** Node.js
 
-* **Back-end:** Node.js
-* **Front-end:** React
-* **Banco de Dados:** PostgreSQL 
+- node-postgres (`pg`)--> Conexão com o Banco de Dados PostgreSQL.
+- express.js --> Construção do Servidor da aplicação.
+- CORS --> Gerenciamento de requisições entre Front-end e Back-end.
+- dotenv --> Leitura das variáveis de ambiente.
+- jsonwebtoken --> Gerar um token de identificação para manter o usuário conectado durante o uso do sistema.
+- bcryptjs --> Hashear as senhas dos usuários.
+- zod --> Validação de dados.
+- dayjs -->Manipulação de datas.
+
+### **Front-end:** React
+
+- recahrts --> Criação de relatórios em formato de gráficos.
+
+### **Banco de Dados:** PostgreSQL
+
+### Requisitos
+
+- Node.js (v18 ou superior)
+- PostgreSQL
+- Gerenciador de Pacotes npm
+
+# Funcionalidades
+
+### 1. 👪 Gestão dos membros da igreja: Cadastro de membros com validações de CPF.
+
+### 2. 📊 Dashboard Interativo: Exibição de cards e gráficos visuais de entraxa e saídas.
+
+### 3. 💰 Controle Financeiro: Registro detalhado de Contas, Dízimos e Ofertas.
 
 ## Como Executar Localmente
+* Obs: Nosso projeto ainda está em andamento, então o repositório não conterá todos os seus respectivos arquivos.
+  
+### 1º Passo --> Configurar o Banco de Dados
+1. Criar um novo Banco de Dados no PostgreSQL com o nome de (`celc_financas`).
+2. Criar todas as tabelas com o arquivo (`celc-financas.sql`).
 
-*O código está sendo estruturado. Os passos de instalação estarão disponíveis aqui assim que a primeira versão do sistema for commitada*
+### 2º Passo --> Configurar o Back-end
+1. Acessar a pasta do back-end
+```bash
+cd backend
+```
+2. Instale as dependências
+```bash
+npm i
+```
+3. Crie um arquivo .env dentro da pasta raiz do projeto
+```bash
+PORT=3000
+
+DB_USER = postgres
+DB_HOST = localhost
+DB_DATABASE = celc_financas
+DB_PASSWORD = senha_aqui
+DB_PORT = 5432
+
+JWT_SECRET = token_jwt
+```
+
+4. Inicie o servidor
+```
+npm run dev
+```
+Ele iniciará na porta (`https://localhost:3000`).
+
+## 3º Passo --> Configurar o Front-end
+1. Acessar a pasta do fornt-end
+```bash
+cd frontend
+```
+2. Instale as dependências
+```bash
+npm i
+```
+3. Inicie o servidor
+```
+npm run dev
+```
