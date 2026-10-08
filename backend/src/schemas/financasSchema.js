@@ -10,7 +10,7 @@ const ofertaDizimoSchema = z.object ({
 const contaSchema = z.object({
   nome_conta: z.string().min(2, 'Nome da conta é obrigatório').max(25),
   valor: z.number().positive('O valor deve ser maior que zero'),
-  status: z.enum(['Pendente', 'Pago', 'Vencido']),
+  status: z.enum(['Pendente', 'Pago', 'Atrasado']),
   data_vencimento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato deve ser AAAA-MM-DD'),
   data_pgto: z.string().nullable().optional()
 });
