@@ -1,19 +1,19 @@
 CREATE TYPE tipo_sexo AS ENUM ('Masculino', 'Feminino');
 CREATE TYPE tipo_estado_civil AS ENUM ('Solteiro', 'Casado', 'Divorciado', 'Viuvo', 'Separado');
 CREATE TYPE tipo_metodo_pgto AS ENUM ('PIX', 'Dinheiro')
-CREATE TYPE tipo_status_conta AS ENUM ('Não Pago', 'Pago', 'Atrasado')
+CREATE TYPE tipo_status_conta AS ENUM ('Pendente', 'Pago', 'Atrasado')
 
 CREATE TABLE diretoria (
 	id SERIAL PRIMARY KEY,
 	nome VARCHAR(100) NOT NULL,
 	login VARCHAR(50) NOT NULL,
-	senha VARCHAR(11) NOT NULL
+	senha VARCHAR(255) NOT NULL
 	)
 
 CREATE TABLE membros (
 	id SERIAL PRIMARY KEY,
 	nome VARCHAR(100) NOT NULL,
-	cpf VARCHAR(14) NOT NULL,
+	cpf VARCHAR(11) NOT NULL,
 	data_nascimento DATE NOT NULL,
 	estado_civil tipo_estado_civil NOT NULL,
 	sexo tipo_sexo NOT NULL,
