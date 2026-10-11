@@ -2,9 +2,9 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet')
+const helmet = require('helmet');
 
-require('.config/database')
+require('./config/database');
 
 const app = express();
 
