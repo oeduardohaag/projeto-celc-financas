@@ -1,7 +1,7 @@
 CREATE TYPE tipo_sexo AS ENUM ('Masculino', 'Feminino');
 CREATE TYPE tipo_estado_civil AS ENUM ('Solteiro', 'Casado', 'Divorciado', 'Viuvo', 'Separado');
-CREATE TYPE tipo_metodo_pgto AS ENUM ('PIX', 'Dinheiro')
-CREATE TYPE tipo_status_conta AS ENUM ('Pendente', 'Pago', 'Atrasado')
+CREATE TYPE tipo_metodo_pgto AS ENUM ('PIX', 'Dinheiro');
+CREATE TYPE tipo_status_conta AS ENUM ('Pendente', 'Pago', 'Atrasado');
 
 CREATE TABLE diretoria (
 	id SERIAL PRIMARY KEY,
