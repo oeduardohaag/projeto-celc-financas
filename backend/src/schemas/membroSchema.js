@@ -10,4 +10,4 @@ const membroSchema = z.object ({
     filhos: z.number.int().default(0)
 });
 
-module.exports = { membroSchema };
+module.exports = membroSchema;

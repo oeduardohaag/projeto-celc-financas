@@ -15,4 +15,4 @@ const contaSchema = z.object({
   data_pgto: z.string().nullable().optional()
 });
 
-module.exports = { ofertaDizimoSchema, contaSchema };
+module.exports = ofertaDizimoSchema, contaSchema;
