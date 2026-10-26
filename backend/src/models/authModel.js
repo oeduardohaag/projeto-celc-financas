@@ -1,12 +1,17 @@
-const pool = require("../config/database");
+const pool = require('../config/database');
 
 const authModel = {
-    async listarDiretoria ({login, senha}) {
-        const query = `SELECT * FROM diretoria`;
-        const values = [login, senha];
-        const result = await pool.query(query, values);
-        return result.rows[0];
-    },
+  async buscarPorLogin(login) {
+    const query = 'SELECT * FROM diretoria WHERE login = $1';
+    const { rows } = await pool.query(query, [login]);
+    return rows[0];
+  },
+
+  async buscarPorId(id) {
+    const query = 'SELECT id, nome, login FROM diretoria WHERE id = $1';
+    const { rows } = await pool.query(query, [id]);
+    return rows[0];
+  }
 };
 
 module.exports = authModel;
