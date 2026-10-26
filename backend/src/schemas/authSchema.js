@@ -6,4 +6,4 @@ const authSchema = z.object({
     senha: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres')
 });
 
-module.exports = authSchema;
+module.exports = { authSchema };

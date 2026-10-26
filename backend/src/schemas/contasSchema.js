@@ -13,4 +13,4 @@ const lancamentoSchema = z.object({
   membro_id: z.coerce.number().int().optional().nullable()
 });
 
-module.exports = lancamentoSchema;
+module.exports = { lancamentoSchema };
