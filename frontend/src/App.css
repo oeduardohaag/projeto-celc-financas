@@ -1,0 +1,352 @@
+.Login-title{
+  margin-top: 80px;
+}
+
+/* ===== Estrutura geral da Home ===== */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+  color: #202936;
+}
+
+/* ===== Menu lateral ===== */
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  flex-shrink: 0;
+  padding: 28px 20px;
+  background-color: #17212b;
+  color: #ffffff;
+}
+
+.sidebar h2 {
+  margin: 0;
+  color: #d4af37;
+  font-size: 28px;
+}
+
+.sidebar-subtitle {
+  margin-top: 4px;
+  color: #c0c8d0;
+}
+
+.menu-title {
+  margin-top: 42px;
+  color: #a8b2bd;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.sidebar ul {
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar li {
+  margin: 8px 0;
+  padding: 13px 12px;
+  border-radius: 7px;
+  color: #dce2e8;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sidebar li:hover,
+.sidebar li.menu-active {
+  background-color: #2b3947;
+  color: #e5c45b;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 30px;
+  color: #c0c8d0;
+}
+
+.sidebar-footer p {
+  margin-bottom: 5px;
+}
+
+.sidebar-footer small {
+  color: #a8b2bd;
+}
+
+/* ===== Área principal ===== */
+.Home-page {
+  flex: 1;
+  min-width: 0;
+  padding: 36px;
+}
+
+.home-header {
+  padding-bottom: 26px;
+  border-bottom: 1px solid #e0e5eb;
+}
+
+.page-label {
+  color: #9b7b19;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.2px;
+}
+
+.home-header h1 {
+  margin: 10px 0;
+  font-size: 28px;
+}
+
+.home-header > div > p:last-child {
+  color: #687483;
+}
+
+/* ===== Cartões de resumo ===== */
+.summary-section {
+  margin-top: 30px;
+}
+
+.summary-section > h2,
+.section-heading h2 {
+  font-size: 20px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.summary-card,
+.chart-card {
+  padding: 22px;
+  border: 1px solid #e5e9ef;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 3px 12px rgb(23 33 43 / 4%);
+}
+
+.summary-card > p {
+  margin-top: 0;
+  color: #687483;
+  font-size: 14px;
+}
+
+.summary-card h3 {
+  margin: 14px 0;
+  font-size: 23px;
+}
+
+.summary-card small {
+  color: #7c8794;
+}
+
+/* ===== Área dos gráficos ===== */
+.charts-section {
+  margin-top: 36px;
+}
+
+.section-heading p {
+  color: #687483;
+  font-size: 14px;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.chart-card {
+  min-height: 230px;
+}
+
+.chart-card h3 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.chart-card p {
+  margin-top: 45px;
+  color: #7c8794;
+  text-align: center;
+}
+
+/* ===== Ajuste para telas menores ===== */
+@media (max-width: 1100px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: auto;
+  }
+
+  .sidebar nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .sidebar li {
+    margin: 0;
+  }
+
+  .sidebar-footer {
+    display: none;
+  }
+
+  .Home-page {
+    padding: 20px;
+  }
+
+  .summary-grid,
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* Área que organiza os dois gráficos */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+/* Cartão de cada gráfico */
+.chart-card {
+  min-width: 0;
+  min-height: 360px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e1e7ef;
+  border-radius: 16px;
+}
+
+/* Área que dá altura ao gráfico */
+.chart-container {
+  width: 100%;
+  height: 280px;
+  min-width: 0;
+}
+
+/* Ajuste para telas menores */
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Seções da tela de contas */
+.accounts-section {
+  margin: 30px 0;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e1e7ef;
+  border-radius: 16px;
+}
+
+.accounts-section h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* Formulário de cadastro */
+.account-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  max-width: 520px;
+}
+
+.account-form label {
+  margin-top: 8px;
+  color: #263746;
+  font-weight: 600;
+}
+
+.account-form input,
+.account-form select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #d6dde6;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #17232e;
+  font: inherit;
+}
+
+.account-form button {
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #d4af37;
+  color: #17232e;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.account-form button:hover {
+  background: #c29d25;
+}
+
+/* Tabela de contas */
+.accounts-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.accounts-table th,
+.accounts-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #e1e7ef;
+}
+
+.accounts-table th {
+  background: #f4f6f9;
+  color: #263746;
+}
+
+.delete-button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #fbe8e8;
+  color: #a52626;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background: #f5d2d2;
+}
+
+@media (max-width: 768px) {
+  .accounts-section {
+    padding: 16px;
+  }
+
+  .accounts-table th,
+  .accounts-table td {
+    padding: 10px 8px;
+    white-space: nowrap;
+  }
+}
