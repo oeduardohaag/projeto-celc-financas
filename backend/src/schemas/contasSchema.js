@@ -1,6 +1,6 @@
 const { z } = require('zod');
 
-const lancamentoSchema = z.object({
+const contasSchema = z.object({
   tipo: z.enum(['receita', 'despesa'], {
     errorMap: () => ({ message: "O tipo deve ser obrigatoriamente 'receita' ou 'despesa'" })}),
   categoria: z.string().min(2, 'A categoria deve ter no mínimo 2 caracteres'),
@@ -13,4 +13,4 @@ const lancamentoSchema = z.object({
   membro_id: z.coerce.number().int().optional().nullable()
 });
 
-module.exports = { lancamentoSchema };
+module.exports = { contasSchema };
