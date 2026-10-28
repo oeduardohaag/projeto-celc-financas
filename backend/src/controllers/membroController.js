@@ -37,7 +37,7 @@ const membroController = {
   async atualizarMembro(req, res, next) {
     try {
       const { id } = req.params;
-      const membroAtualizado = await membroModel.atualizar(id, req.body);
+      const membroAtualizado = await membroModel.atualizarMembro(id, req.body);
       
       if (!membroAtualizado) {
         return res.status(404).json({ status: 'erro', mensagem: 'Membro não encontrado' });
