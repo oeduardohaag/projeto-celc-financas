@@ -184,7 +184,7 @@ function Relatorios({ onVoltar }) {
             <BarChart data={dadosGrafico}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="mes" />
-              <YAxis />
+              <YAxis width={80} tickFormatter={(valor) => `R$ ${valor}`} />
               <Tooltip formatter={(valor) => formatarReais(valor)} />
               <Legend />
               <Bar dataKey="dizimos" name="Dízimos" fill="#D4AF37" />

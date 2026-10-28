@@ -1,7 +1,7 @@
 import '../App.css'
 import Graficos from './Graficos'
 
-function Home({ onAbrirContas,onAbrirDizimos,  onAbrirOfertas , onAbrirRelatorios}) {
+function Home({ onAbrirContas, onAbrirDizimos, onAbrirOfertas, onAbrirRelatorios }) {
   return (
     <div className="dashboard">
       {/* Menu lateral do sistema */}
@@ -15,41 +15,41 @@ function Home({ onAbrirContas,onAbrirDizimos,  onAbrirOfertas , onAbrirRelatorio
           <ul>
             <li className="menu-active">Início</li>
             <li>
-            <button
-              type="button"
-              className="menu-button"
-              onClick={onAbrirContas}
-            >
-              Contas
-            </button>
-          </li>
-            <li>
               <button
-              type="button"
-              className="menu-button"
-              onClick={onAbrirDizimos}
-              > 
-              Dizimos
+                type="button"
+                className="menu-button"
+                onClick={onAbrirContas}
+              >
+                Contas
               </button>
             </li>
             <li>
-  <button
-    type="button"
-    className="menu-button"
-    onClick={onAbrirOfertas}
-  >
-    Ofertas
-  </button>
-</li>
-          <li>
-  <button
-    type="button"
-    className="menu-button"
-    onClick={onAbrirRelatorios}
-  >
-    Relatórios
-  </button>
-</li>
+              <button
+                type="button"
+                className="menu-button"
+                onClick={onAbrirDizimos}
+              >
+                Dízimos
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className="menu-button"
+                onClick={onAbrirOfertas}
+              >
+                Ofertas
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className="menu-button"
+                onClick={onAbrirRelatorios}
+              >
+                Relatórios
+              </button>
+            </li>
           </ul>
         </nav>
 

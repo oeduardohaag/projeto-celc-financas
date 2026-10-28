@@ -56,7 +56,7 @@ function Graficos() {
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e9ef" />
 
               <XAxis dataKey="mes" />
-              <YAxis tickFormatter={(valor) => `R$ ${valor}`} />
+              <YAxis width={80} tickFormatter={(valor) => `R$ ${valor}`} />
 
               <Tooltip
                 formatter={(valor) => formatarReais(valor)}
