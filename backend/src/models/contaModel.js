@@ -71,13 +71,18 @@ const contaModel = {
   },
 
   async buscarPorId(id) {
+    const idInt = parseInt(id, 10);
+    if (isNaN(idInt)) {
+      return null;
+    }
+
     const query = `
       SELECT c.*, m.nome AS nome_membro 
       FROM contas c
       LEFT JOIN membros m ON c.membro_id = m.id
       WHERE c.id = $1
     `;
-    const { rows } = await pool.query(query, [id]);
+    const { rows } = await pool.query(query, [idInt]);
     return rows[0];
   },
 
