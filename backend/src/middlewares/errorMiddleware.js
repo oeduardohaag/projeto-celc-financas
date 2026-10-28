@@ -14,6 +14,6 @@ function errorMiddleware(err, req, res, next) {
         status: 'erro',
         message: 'Erro interno do servidor'
     });
-}
+};
 
 module.exports = errorMiddleware; 
