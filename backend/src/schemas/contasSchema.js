@@ -1,16 +1,20 @@
 const { z } = require('zod');
 
 const contasSchema = z.object({
-  tipo: z.enum(['receita', 'despesa'], {
-    errorMap: () => ({ message: "O tipo deve ser obrigatoriamente 'receita' ou 'despesa'" })}),
-  categoria: z.string().min(2, 'A categoria deve ter no mínimo 2 caracteres'),
-  descricao: z.string().min(2, 'A descrição deve ter no mínimo 2 caracteres').optional().nullable(),
-  valor: z.coerce.number().positive('O valor deve ser um número maior que zero'),
+  nome_conta: z.string().max(25, 'O nome deve ter no máximo 25 caracteres').min(1, 'O nome é obrigatório'),
+  classificacao: z.enum(['Receita', 'Despesa'], { 
+    errorMap: () => ({ message: "A classificação deve ser 'Receita' ou 'Despesa'" }) 
+  }),
+  categoria: z.enum(['Dízimo', 'Oferta', 'Transferencia', 'Desp. Administrativa', 'Energia', 'Limpeza', 'Água', 'Subsidio Pastoral'], { 
+    errorMap: () => ({ message: "Categoria inválida" }) 
+  }),
+  valor: z.number().positive('O valor deve ser maior que zero'),
+  status: z.enum(['Pendente', 'Pago', 'Atrasado'], { 
+    errorMap: () => ({ message: "O status deve ser 'Pendente', 'Pago' ou 'Atrasado'" }) 
+  }),
   data_vencimento: z.string().min(1, 'A data de vencimento é obrigatória'),
-  data_pagamento: z.string().optional().nullable(),
-  status: z.enum(['pendente', 'pago', 'recebido'], {
-    errorMap: () => ({ message: "O status deve ser 'pendente', 'pago' ou 'recebido'" })}).default('pendente'),
-  membro_id: z.coerce.number().int().optional().nullable()
+  data_pgto: z.string().nullable().optional(),
+  membro_id: z.number().int().nullable().optional()
 });
 
 module.exports = { contasSchema };
