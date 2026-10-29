@@ -1,6 +1,7 @@
 const pool = require('../config/database');
 
 const contaModel = {
+  // Função para criar uma nova conta no banco de dados
   async criarConta(dados) {
     const {
       nome_conta,
@@ -35,6 +36,7 @@ const contaModel = {
     return rows[0];
   },
 
+  // Função para listar contas com filtros opcionais
   async listarContas(filtros = {}) {
     let query = `
       SELECT c.*, m.nome AS nome_membro 
@@ -45,6 +47,7 @@ const contaModel = {
     const conditions = [];
     const values = [];
 
+    // Adiciona condições de filtro com base nos parâmetros fornecidos
     if (filtros.classificacao) {
       values.push(filtros.classificacao);
       conditions.push(`c.classificacao = $${values.length}`);
@@ -70,6 +73,7 @@ const contaModel = {
     return rows;
   },
 
+  // Função para buscar uma conta pelo ID
   async buscarPorId(id) {
     const idInt = parseInt(id, 10);
     if (isNaN(idInt)) {
@@ -86,6 +90,7 @@ const contaModel = {
     return rows[0];
   },
 
+  // Função para atualizar os detalhes de uma conta existente
   async atualizarStatus(id, status, data_pgto = null) {
     const dataPagamentoFinal = status === 'Pago' ? (data_pgto || new Date()) : null;
     const query = `
@@ -98,6 +103,7 @@ const contaModel = {
     return rows[0];
   },
 
+  // Função para deletar uma conta pelo ID
   async deletarConta(id) {
     const query = 'DELETE FROM contas WHERE id = $1 RETURNING id;';
     const { rows } = await pool.query(query, [id]);

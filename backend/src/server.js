@@ -10,14 +10,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Rotas
 app.use('/auth', authRoutes);
 app.use('/membros', membroRoutes);
 app.use('/contas', contasRoutes);
 
+// Rota raiz para verificar se a API está funcionando
 app.get('/', (req, res) => {
   res.json({ status: 'sucesso', mensagem: 'API do CELC Finanças funcinando!' });
 });
 
+// Middleware de tratamento de erros
 app.use((err, req, res, next) => {
   console.error('Erro capturado pelo middleware:', err);
 
@@ -36,6 +39,7 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Inicia o servidor 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

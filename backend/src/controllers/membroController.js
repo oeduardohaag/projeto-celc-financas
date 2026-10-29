@@ -1,6 +1,7 @@
 const membroModel = require('../models/membroModel');
 
 const membroController = {
+  // Função para criar um novo membro
   async criarMembro(req, res, next) {
     try {
       const novoMembro = await membroModel.criarMembro(req.body);
@@ -10,6 +11,7 @@ const membroController = {
     }
   },
 
+  // Função para listar todos os membros
   async listarTodos(req, res, next) {
     try {
       const membros = await membroModel.listarTodos();
@@ -19,6 +21,7 @@ const membroController = {
     }
   },
 
+  // Função para buscar um membro pelo ID
   async buscarPorId(req, res, next) {
     try {
       const { id } = req.params;
@@ -34,6 +37,7 @@ const membroController = {
     }
   },
 
+  // Função para atualizar os detalhes de um membro existente
   async atualizarMembro(req, res, next) {
     try {
       const { id } = req.params;
@@ -49,6 +53,7 @@ const membroController = {
     }
   },
 
+  // Função para deletar um membro pelo ID
   async deletarMembro(req, res, next) {
     try {
       const { id } = req.params;

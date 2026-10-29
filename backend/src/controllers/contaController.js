@@ -3,6 +3,7 @@ const dashboardModel = require('../models/dashboardModel');
 const { contasSchema } = require('../schemas/contasSchema');
 
 const contaController = {
+  // Função para criar uma nova conta
   async criarConta(req, res, next) {
     try {
       const dadosValidados = contasSchema.parse(req.body);
@@ -13,6 +14,7 @@ const contaController = {
     }
   },
 
+  // Função para listar contas com filtros opcionais
   async listarContas(req, res, next) {
     try {
       const filtros = {
@@ -28,6 +30,7 @@ const contaController = {
     }
   },
 
+  // Função para buscar uma conta pelo ID
   async buscarId(req, res, next) {
     try {
       const { id } = req.params;
@@ -43,6 +46,7 @@ const contaController = {
     }
   },
 
+  // Função para atualizar os detalhes de uma conta existente
   async atualizarStatus(req, res, next) {
     try {
       const { id } = req.params;
@@ -60,6 +64,7 @@ const contaController = {
     }
   },
 
+  // Função para deletar uma conta pelo ID
   async deletarConta(req, res, next) {
     try {
       const { id } = req.params;
@@ -75,6 +80,7 @@ const contaController = {
     }
   },
 
+  // Função para obter o resumo geral das contas
   async resumoDashboard(req, res, next) {
     try {
       const resumo = await dashboardModel.obterResumoGeral();
@@ -84,6 +90,7 @@ const contaController = {
     }
   },
 
+  // Função para obter os dados do gráfico de receitas e despesas por mês
   async graficoPorMes(req, res, next) {
     try {
       const { ano } = req.query;

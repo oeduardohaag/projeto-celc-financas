@@ -1,6 +1,7 @@
 const pool = require('../config/database');
 
 const dashboardModel = {
+  // Função para obter o resumo geral das contas
   async obterResumoGeral() {
     const query = `
       SELECT 
@@ -18,6 +19,7 @@ const dashboardModel = {
     return rows[0];
   },
 
+  // Função para obter dados do gráfico de receitas e despesas por mês
   async obterGraficoPorMes(ano) {
     const anoSelecionado = ano || new Date().getFullYear();
     

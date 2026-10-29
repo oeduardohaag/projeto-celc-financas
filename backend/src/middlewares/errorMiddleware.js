@@ -1,6 +1,7 @@
 const { zodError } = require('zod');
 
-function errorMiddleware(err, req, res, next) {
+// Middleware de tratamento de erros
+const errorMiddleware = (err, req, res, next) => {
     if (err instanceof zodError) {
         return res.status(400).json({ 
             status: 'erro',

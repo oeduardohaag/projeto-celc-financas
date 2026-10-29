@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
+  // Verifica se o cabeçalho de autorização está presente
   if (!authHeader) {
     return res.status(401).json({ 
       status: 'erro', 
@@ -12,6 +13,7 @@ const authMiddleware = (req, res, next) => {
 
   const partes = authHeader.split(' ');
 
+  // Verifica se o token está no formato correto (Bearer <token>)
   if (partes.length !== 2) {
     return res.status(401).json({ 
       status: 'erro', 
@@ -21,6 +23,7 @@ const authMiddleware = (req, res, next) => {
 
   const [esquema, token] = partes;
 
+  // Verifica se o esquema é "Bearer"
   if (!/^Bearer$/i.test(esquema)) {
     return res.status(401).json({ 
       status: 'erro', 
@@ -28,6 +31,7 @@ const authMiddleware = (req, res, next) => {
     });
   }
 
+  // Verifica e decodifica o token JWT
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(401).json({ 
