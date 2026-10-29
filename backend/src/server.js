@@ -4,6 +4,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const membroRoutes = require('./routes/membro.routes');
 const contasRoutes = require('./routes/contas.routes');
+const swaggerDocs = require('./config/swagger');
 
 const app = express();
 
@@ -42,4 +43,6 @@ app.listen(PORT, () => {
   console.log(`SERVIDOR RODANDO NA PORTA ${PORT}!`);
   console.log(`SERVIDOR RODANDO NA PORTA ${PORT}!`);
   console.log(`SERVIDOR RODANDO NA PORTA ${PORT}!`);
+
+  swaggerDocs(app);
 });
