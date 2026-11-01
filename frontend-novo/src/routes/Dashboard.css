@@ -1,0 +1,312 @@
+
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 28px;
+  color: #172033;
+}
+
+
+.dashboard-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.dashboard-eyebrow {
+  margin: 0 0 7px;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.dashboard-intro h2 {
+  margin: 0;
+  color: #172033;
+  font-size: clamp(23px, 3vw, 30px);
+  font-weight: 750;
+}
+
+.dashboard-intro > div > p:last-child {
+  margin: 8px 0 0;
+  color: #718096;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.dashboard-period {
+  padding: 9px 12px;
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.dashboard-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #e7ebf2;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 3px 12px rgb(15 23 42 / 3%);
+}
+
+.dashboard-card-label {
+  display: block;
+  margin-bottom: 18px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.dashboard-card-value {
+  display: block;
+  overflow-wrap: anywhere;
+  color: #172033;
+  font-size: clamp(18px, 2vw, 25px);
+  font-weight: 750;
+  letter-spacing: -0.5px;
+}
+
+.dashboard-card-description {
+  display: block;
+  margin-top: 10px;
+  color: #8490a3;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.dashboard-card.saldo {
+  border-top: 3px solid #2563eb;
+}
+
+.dashboard-card.receitas {
+  border-top: 3px solid #16a34a;
+}
+
+.dashboard-card.despesas {
+  border-top: 3px solid #f87171;
+}
+
+.dashboard-card.contribuicoes {
+  border-top: 3px solid #8b5cf6;
+}
+
+/* Gráficos e movimentações. */
+.dashboard-analytics {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.dashboard-panel {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #e7ebf2;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 3px 12px rgb(15 23 42 / 3%);
+}
+
+.dashboard-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.dashboard-panel-header h3 {
+  margin: 0;
+  color: #172033;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.dashboard-panel-header p {
+  margin: 7px 0 0;
+  color: #8490a3;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Área do gráfico de barras. */
+.dashboard-chart {
+  width: 100%;
+  height: 280px;
+  margin-top: 18px;
+}
+
+.dashboard-chart .recharts-wrapper {
+  max-width: 100%;
+}
+
+/* Lista de movimentações recentes. */
+.dashboard-transactions {
+  min-width: 0;
+}
+
+.dashboard-transaction-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+}
+
+.dashboard-transaction {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 15px 0;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.dashboard-transaction:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.transaction-icon {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 11px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.transaction-icon.entrada {
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+.transaction-icon.saida {
+  background: #fff1f2;
+  color: #e11d48;
+}
+
+.transaction-details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.transaction-details strong {
+  overflow-wrap: anywhere;
+  color: #334155;
+  font-size: 13px;
+}
+
+.transaction-details span {
+  color: #8490a3;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.transaction-value {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.transaction-value.entrada {
+  color: #15803d;
+}
+
+.transaction-value.saida {
+  color: #e11d48;
+}
+
+/* Aviso sobre dados ainda não integrados. */
+.dashboard-disclaimer {
+  margin: -5px 0 0;
+  color: #8490a3;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* Adaptação para telas médias. */
+@media (max-width: 1050px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-analytics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Adaptação para celulares. */
+@media (max-width: 560px) {
+  .dashboard {
+    gap: 15px;
+  }
+
+  .dashboard-cards {
+    gap: 10px;
+  }
+
+  .dashboard-card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .dashboard-card-label {
+    margin-bottom: 13px;
+    font-size: 12px;
+  }
+
+  .dashboard-card-value {
+    font-size: 17px;
+  }
+
+  .dashboard-card-description {
+    font-size: 10px;
+  }
+
+  .dashboard-panel {
+    padding: 15px;
+  }
+
+  .dashboard-chart {
+    height: 235px;
+  }
+
+  .dashboard-transaction {
+    gap: 9px;
+  }
+
+  .transaction-icon {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .transaction-details strong,
+  .transaction-value {
+    font-size: 11px;
+  }
+
+  .transaction-details span {
+    font-size: 10px;
+  }
+}
