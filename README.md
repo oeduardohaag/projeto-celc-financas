@@ -58,13 +58,13 @@ npm i
 ```bash
 PORT=3000
 
-DB_USER = postgres
-DB_HOST = localhost
-DB_DATABASE = celc_financas
-DB_PASSWORD = senha_aqui
-DB_PORT = 5432
+DB_HOST=localhost
+DB_USER=postgres
+DB_PASSWORD=123456
+DB_NAME=celc_financas
+DB_PORT=5432
 
-JWT_SECRET = token_jwt
+JWT_SECRET = token_aqui
 ```
 
 4. Inicie o servidor
