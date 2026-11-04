@@ -6,6 +6,7 @@ const authController = {
   async login(req, res) {
     const { login, senha } = req.body;
 
+    // Validação dos dados de entrada
     try {
       if (!login || !senha) {
         return res.status(400).json({ 
@@ -32,11 +33,20 @@ const authController = {
         });
       }
 
+      // Gera o token JWT
       const token = jwt.sign(
         { id: usuario.id, login: usuario.login },
         process.env.JWT_SECRET,
         { expiresIn: '8h' }
       );
+
+      // Configura o cookie com o token JWT
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 8 * 60 * 60 * 1000 
+      });
 
       return res.status(200).json({
         status: 'sucesso',
