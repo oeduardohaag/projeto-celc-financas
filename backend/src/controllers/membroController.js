@@ -60,7 +60,7 @@ const membroController = {
       const deletado = await membroModel.deletarMembro(id);
       
       if (!deletado) {
-        return res.status(404).json({ status: 'erro', mensagem: 'Membro não encontrado' });
+        return res.status(404).json({ status: 'erro', mensagem: 'Membro deletado com sucesso' });
       }
       
       return res.json({ status: 'sucesso', mensagem: 'Membro removido com sucesso' });
