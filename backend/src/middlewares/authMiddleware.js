@@ -1,42 +1,20 @@
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.token;
 
-  // Verifica se o cabeçalho de autorização está presente
-  if (!authHeader) {
-    return res.status(401).json({ 
-      status: 'erro', 
-      mensagem: 'Token de autenticação não fornecido' 
+  if (!token) {
+    return res.status(401).json({
+      status: 'erro',
+      mensagem: 'Acesso negado. O token não foi fornecido.'
     });
   }
 
-  const partes = authHeader.split(' ');
-
-  // Verifica se o token está no formato correto (Bearer <token>)
-  if (partes.length !== 2) {
-    return res.status(401).json({ 
-      status: 'erro', 
-      mensagem: 'Erro no formato do token' 
-    });
-  }
-
-  const [esquema, token] = partes;
-
-  // Verifica se o esquema é "Bearer"
-  if (!/^Bearer$/i.test(esquema)) {
-    return res.status(401).json({ 
-      status: 'erro', 
-      mensagem: 'Token mal formatado' 
-    });
-  }
-
-  // Verifica e decodifica o token JWT
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) =>{
     if (err) {
-      return res.status(401).json({ 
-        status: 'erro', 
-        mensagem: 'Token inválido ou expirado' 
+      return res.status(401).json({
+        status: 'erro',
+        mensagem: 'O Token é inválido ou expirou. Faça o login novamente'
       });
     }
 
