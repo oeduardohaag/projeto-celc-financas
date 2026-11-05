@@ -1,10 +1,10 @@
-const membroModel = require('../models/membroModel');
+const membrosModel = require('../models/membrosModel');
 
-const membroController = {
+const membrosController = {
   // Função para criar um novo membro
   async criarMembro(req, res, next) {
     try {
-      const novoMembro = await membroModel.criarMembro(req.body);
+      const novoMembro = await membrosModel.criarMembro(req.body);
       return res.status(201).json({ status: 'sucesso', dados: novoMembro });
     } catch (error) {
       next(error);
@@ -14,7 +14,7 @@ const membroController = {
   // Função para listar todos os membros
   async listarTodos(req, res, next) {
     try {
-      const membros = await membroModel.listarTodos();
+      const membros = await membrosModel.listarTodos();
       return res.json({ status: 'sucesso', dados: membros });
     } catch (error) {
       next(error);
@@ -25,7 +25,7 @@ const membroController = {
   async buscarPorId(req, res, next) {
     try {
       const { id } = req.params;
-      const membro = await membroModel.buscarPorId(id);
+      const membro = await membrosModel.buscarPorId(id);
       
       if (!membro) {
         return res.status(404).json({ status: 'erro', mensagem: 'Membro não encontrado' });
@@ -41,7 +41,7 @@ const membroController = {
   async atualizarMembro(req, res, next) {
     try {
       const { id } = req.params;
-      const membroAtualizado = await membroModel.atualizarMembro(id, req.body);
+      const membroAtualizado = await membrosModel.atualizarMembro(id, req.body);
       
       if (!membroAtualizado) {
         return res.status(404).json({ status: 'erro', mensagem: 'Membro não encontrado' });
@@ -57,7 +57,7 @@ const membroController = {
   async deletarMembro(req, res, next) {
     try {
       const { id } = req.params;
-      const deletado = await membroModel.deletarMembro(id);
+      const deletado = await membrosModel.deletarMembro(id);
       
       if (!deletado) {
         return res.status(404).json({ status: 'erro', mensagem: 'Membro deletado com sucesso' });
@@ -70,4 +70,4 @@ const membroController = {
   }
 };
 
-module.exports = membroController;
+module.exports = membrosController;

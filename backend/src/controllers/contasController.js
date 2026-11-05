@@ -1,13 +1,13 @@
-const contaModel = require('../models/contaModel');
+const contasModel = require('../models/contasModel');
 const dashboardModel = require('../models/dashboardModel');
 const { contasSchema } = require('../schemas/contasSchema');
 
-const contaController = {
+const contasController = {
   // Função para criar uma nova conta
   async criarConta(req, res, next) {
     try {
       const dadosValidados = contasSchema.parse(req.body);
-      const novaConta = await contaModel.criarConta(dadosValidados);
+      const novaConta = await contasModel.criarConta(dadosValidados);
       return res.status(201).json({ status: 'sucesso', dados: novaConta });
     } catch (error) {
       next(error);
@@ -23,7 +23,7 @@ const contaController = {
         status: req.query.status
       };
 
-      const contas = await contaModel.listarContas(filtros);
+      const contas = await contasModel.listarContas(filtros);
       return res.json({ status: 'sucesso', dados: contas });
     } catch (error) {
       next(error);
@@ -34,7 +34,7 @@ const contaController = {
   async buscarId(req, res, next) {
     try {
       const { id } = req.params;
-      const conta = await contaModel.buscarPorId(id);
+      const conta = await contasModel.buscarPorId(id);
       
       if (!conta) {
         return res.status(404).json({ status: 'erro', mensagem: 'Conta não encontrada' });
@@ -52,7 +52,7 @@ const contaController = {
       const { id } = req.params;
       const { status, data_pgto } = req.body;
 
-      const contaAtualizada = await contaModel.atualizarStatus(id, status, data_pgto);
+      const contaAtualizada = await contasModel.atualizarStatus(id, status, data_pgto);
       
       if (!contaAtualizada) {
         return res.status(404).json({ status: 'erro', mensagem: 'Conta não encontrada' });
@@ -68,7 +68,7 @@ const contaController = {
   async deletarConta(req, res, next) {
     try {
       const { id } = req.params;
-      const deletado = await contaModel.deletarConta(id);
+      const deletado = await contasModel.deletarConta(id);
       
       if (!deletado) {
         return res.status(404).json({ status: 'erro', mensagem: 'Conta não encontrada' });
@@ -102,4 +102,4 @@ const contaController = {
   }
 };
 
-module.exports = contaController;
+module.exports = contasController;

@@ -4,7 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const authRoutes = require('./routes/auth.routes');
-const membroRoutes = require('./routes/membro.routes');
+const membrosRoutes = require('./routes/membros.routes');
 const contasRoutes = require('./routes/contas.routes');
 
 // Configuração do rate limiter para limitar o número de requisições por IP (5 Vezes a cada 15 minutos)
@@ -28,7 +28,7 @@ app.use(apiLimiter);
 
 // Rotas
 app.use('/auth', authRoutes);
-app.use('/membros', membroRoutes);
+app.use('/membros', membrosRoutes);
 app.use('/contas', contasRoutes);
 
 // Rota raiz para verificar se a API está funcionando

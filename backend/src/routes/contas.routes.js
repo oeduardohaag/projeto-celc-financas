@@ -1,21 +1,21 @@
 const { Router } = require('express');
-const contaController = require('../controllers/contaController');
+const contasController = require('../controllers/contasController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = Router();
 
 router.use(authMiddleware);
 
-router.patch('/:id/status', contaController.atualizarStatus);
+router.patch('/:id/status', contasController.atualizarStatus);
 
-router.get('/', contaController.listarContas);
-router.get('/dashboard/resumo', contaController.resumoDashboard);
-router.get('/graficos/mes', contaController.graficoPorMes);
+router.get('/', contasController.listarContas);
+router.get('/dashboard/resumo', contasController.resumoDashboard);
+router.get('/graficos/mes', contasController.graficoPorMes);
 
-router.post('/', contaController.criarConta);
-router.get('/', contaController.listarContas);
-router.get('/:id', contaController.buscarId);
-router.delete('/:id', contaController.deletarConta);
-router.patch('/:id/status', contaController.atualizarStatus);
+router.post('/', contasController.criarConta);
+router.get('/', contasController.listarContas);
+router.get('/:id', contasController.buscarId);
+router.delete('/:id', contasController.deletarConta);
+router.patch('/:id/status', contasController.atualizarStatus);
 
 module.exports = router;
