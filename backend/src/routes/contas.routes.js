@@ -6,8 +6,6 @@ const router = Router();
 
 router.use(authMiddleware);
 
-router.patch('/:id/status', contasController.atualizarStatus);
-
 router.get('/', contasController.listarContas);
 router.get('/dashboard/resumo', contasController.resumoDashboard);
 router.get('/graficos/mes', contasController.graficoPorMes);
