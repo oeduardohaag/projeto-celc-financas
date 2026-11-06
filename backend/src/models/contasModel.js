@@ -1,6 +1,6 @@
 const pool = require('../config/database');
 
-const contaModel = {
+const contasModel = {
   // Função para criar uma nova conta no banco de dados
   async criarConta(dados) {
     const {
@@ -43,7 +43,7 @@ const contaModel = {
       FROM contas c
       LEFT JOIN membros m ON c.membro_id = m.id
     `;
-    
+
     const conditions = [];
     const values = [];
 
@@ -90,7 +90,59 @@ const contaModel = {
     return rows[0];
   },
 
-  // Função para atualizar os detalhes de uma conta existente
+  // Função para atualizar todos os detalhes de uma conta existente
+  async atualizarConta(id, dados) {
+    const idInt = parseInt(id, 10);
+    if (isNaN(idInt)) {
+      return null;
+    }
+
+    const {
+      nome_conta,
+      classificacao,
+      categoria,
+      valor,
+      status,
+      data_vencimento,
+      data_pgto,
+      membro_id
+    } = dados;
+
+    // Trata valores nulos ou vazios para não quebrar o PostgreSQL
+    const membroIdFinal = membro_id ? parseInt(membro_id, 10) : null;
+    const dataPgtoFinal = data_pgto && data_pgto.trim() !== '' ? data_pgto : null;
+
+    const query = `
+      UPDATE contas
+      SET nome_conta = $1, 
+          classificacao = $2, 
+          categoria = $3, 
+          valor = $4, 
+          status = $5, 
+          data_vencimento = $6, 
+          data_pgto = $7, 
+          membro_id = $8
+      WHERE id = $9
+      RETURNING *;
+    `;
+
+    const values = [
+      nome_conta,
+      classificacao,
+      categoria,
+      valor,
+      status || 'Pendente',
+      data_vencimento,
+      dataPgtoFinal,
+      membroIdFinal,
+      idInt
+    ];
+
+    const { rows } = await pool.query(query, values);
+    return rows[0];
+  },
+
+  // Função para atualizar apenas o status (caso queira manter a função anterior)
   async atualizarStatus(id, status, data_pgto = null) {
     const dataPagamentoFinal = status === 'Pago' ? (data_pgto || new Date()) : null;
     const query = `
@@ -111,4 +163,4 @@ const contaModel = {
   }
 };
 
-module.exports = contaModel;
+module.exports = contasModel;

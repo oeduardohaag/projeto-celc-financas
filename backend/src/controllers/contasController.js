@@ -35,11 +35,11 @@ const contasController = {
     try {
       const { id } = req.params;
       const conta = await contasModel.buscarPorId(id);
-      
+
       if (!conta) {
         return res.status(404).json({ status: 'erro', mensagem: 'Conta não encontrada' });
       }
-      
+
       return res.json({ status: 'sucesso', dados: conta });
     } catch (error) {
       next(error);
@@ -47,17 +47,34 @@ const contasController = {
   },
 
   // Função para atualizar os detalhes de uma conta existente
+  async atualizarConta(req, res) {
+    const { id } = req.params;
+
+    try {
+      const contaAtualizada = await contasModel.atualizarConta(id, req.body);
+
+      if (!contaAtualizada) {
+        return res.status(404).json({ erro: 'Conta não encontrada.' });
+      }
+
+      return res.status(200).json(contaAtualizada);
+    } catch (erro) {
+      console.error('Erro ao atualizar conta no controller:', erro);
+      return res.status(500).json({ erro: 'Erro interno no servidor ao atualizar conta.' });
+    }
+  },
+
   async atualizarStatus(req, res, next) {
     try {
       const { id } = req.params;
       const { status, data_pgto } = req.body;
 
       const contaAtualizada = await contasModel.atualizarStatus(id, status, data_pgto);
-      
+
       if (!contaAtualizada) {
         return res.status(404).json({ status: 'erro', mensagem: 'Conta não encontrada' });
       }
-      
+
       return res.json({ status: 'sucesso', dados: contaAtualizada });
     } catch (error) {
       next(error);
@@ -69,11 +86,11 @@ const contasController = {
     try {
       const { id } = req.params;
       const deletado = await contasModel.deletarConta(id);
-      
+
       if (!deletado) {
         return res.status(404).json({ status: 'erro', mensagem: 'Conta não encontrada' });
       }
-      
+
       return res.json({ status: 'sucesso', mensagem: 'Conta removida com sucesso' });
     } catch (error) {
       next(error);

@@ -13,7 +13,8 @@ router.get('/graficos/mes', contasController.graficoPorMes);
 router.post('/', contasController.criarConta);
 router.get('/', contasController.listarContas);
 router.get('/:id', contasController.buscarId);
-router.delete('/:id', contasController.deletarConta);
+router.put('/:id', contasController.atualizarConta)
 router.patch('/:id/status', contasController.atualizarStatus);
+router.delete('/:id', contasController.deletarConta);
 
 module.exports = router;
