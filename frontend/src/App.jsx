@@ -1,51 +1,87 @@
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
 
-import { useState } from 'react'
+} from 'react-router-dom'
+
+import {
+  Settings,
+  LogOut,
+  CircleUser,
+  Wallet,
+  FileText,
+  ChartNoAxesColumn,
+} from 'lucide-react'
+
 import './App.css'
-import Login from './pages/Login'
-import Home from './pages/Home'
-import Contas from './pages/Contas'
-import Dizimos from './pages/Dizimos'
-import Ofertas from './pages/Ofertas' 
-import Relatorios from './pages/Relatorios'
+
+import Login from './routes/Login'
+import Contas from './routes/Contas'
+import Relatorios from './routes/Relatorios'
+import Graficos from './routes/Graficos'
+import Configuracoes from './routes/Configuracoes'
+import Membros from './routes/Membros'
+import LayoutFinanceiro from './components/LayoutFinanceiro'
 
 function App() {
-  const [logado, setLogado] = useState(false)
-  const [pagina, setPagina] = useState('inicio')
-
-  if (!logado) {
-    return <Login onEntrar={() => setLogado(true)} />
-  }
-
-  if (pagina === 'contas') {
-    return (
-      <Contas
-        onVoltar={() => setPagina('inicio')}
-      />
-    )
-  }
-  if (pagina === 'dizimos') {
-    return (
-      <Dizimos onVoltar={() => setPagina('inicio')} />
-    )
-  }
-  if (pagina === 'ofertas') {
-    return (
-      <Ofertas onVoltar={() => setPagina('inicio')} />
-    )
-  }
-  if (pagina === 'relatorios') {
-    return (
-      <Relatorios onVoltar={() => setPagina('inicio')} />
-    )
-  }
+  const navigate = useNavigate()
 
   return (
-    <Home
-      onAbrirContas={() => setPagina('contas')}
-      onAbrirDizimos={() => setPagina('dizimos')}
-      onAbrirOfertas={() => setPagina('ofertas')}
-      onAbrirRelatorios={() => setPagina('relatorios')}
-    />
+    <Routes>
+      <Route
+        path="/"
+        element={<Navigate to="/login" replace />}
+      />
+
+      <Route
+        path="/login"
+        element={<Login onEntrar={() => navigate('/contas')} />}
+      />
+
+      <Route element={<LayoutFinanceiro />}>
+        <Route
+          path="/dashboard"
+          element={<Navigate to="/contas" replace />}
+        />
+
+        <Route
+          path="/home"
+          element={<Navigate to="/contas" replace />}
+        />
+
+        <Route 
+          path="membros" 
+          element={<Membros />} 
+        />
+
+        <Route
+          path="/contas"
+          element={<Contas />}
+        />
+
+        <Route
+          path="/relatorios"
+          element={<Relatorios onVoltar={() => navigate('/contas')} />}
+        />
+
+        <Route
+          path="/graficos"
+          element={<Graficos />}
+        />
+
+        <Route
+          path="/configuracoes"
+          element={<Configuracoes />}
+        />
+      </Route>
+
+      <Route
+        path="*"
+        element={<Navigate to="/login" replace />}
+      />
+    </Routes>
   )
 }
 
