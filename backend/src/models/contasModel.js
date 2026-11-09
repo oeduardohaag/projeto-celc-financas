@@ -8,6 +8,7 @@ const contasModel = {
       classificacao,
       categoria,
       valor,
+      metodo_pgto,
       status,
       data_vencimento,
       data_pgto,
@@ -26,6 +27,7 @@ const contasModel = {
       classificacao,
       categoria,
       valor,
+      metodo_pgto,
       status || 'Pendente',
       data_vencimento,
       data_pgto || null,
@@ -58,6 +60,11 @@ const contasModel = {
       conditions.push(`c.categoria = $${values.length}`);
     }
 
+    if (filtros.metodo_pgto) {
+      values.push(filtros.metodo_pgto);
+      conditions.push(`c.metodo_pgto = $${values.length}`);
+    }
+
     if (filtros.status) {
       values.push(filtros.status);
       conditions.push(`c.status = $${values.length}`);
@@ -69,7 +76,7 @@ const contasModel = {
 
     query += ` ORDER BY c.data_vencimento DESC`;
 
-    const { rows } = await pool.query(query, values);
+    const { rows } = await supabase.query(query, values);
     return rows;
   },
 
@@ -102,6 +109,7 @@ const contasModel = {
       classificacao,
       categoria,
       valor,
+      metodo_pgto,
       status,
       data_vencimento,
       data_pgto,
@@ -131,6 +139,7 @@ const contasModel = {
       classificacao,
       categoria,
       valor,
+      metodo_pgto,
       status || 'Pendente',
       data_vencimento,
       dataPgtoFinal,
