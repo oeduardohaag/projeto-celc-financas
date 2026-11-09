@@ -1,22 +1,19 @@
 require('dotenv').config();
-const { Pool } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 
-// Configurações do pool de conexões com o banco de dados
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT
-});
+// Configurações do supabase de conexões com o banco de dados
+const supabase = createClient(
+  process.env.SUPABASE_URL, 
+  process.env.SUPABASE_ANON_KEY
+);
 
 // Testa a conexão com o banco de dados
-pool.connect((err, client, release) => {
-  if (err) {
-    return console.error('erro ao conectar com o banco:', err.stack);
-  }
-  console.log('conexão feita com o banco');
-  release(); 
-});
+const { err } = supabase.from('usuarios').select('*').limit(1);
 
-module.exports = pool;
+if (err) {
+    console.error('erro ao se conectar com o banco supabase:', err.message);
+  } else {
+    console.log('conectado com o banco supabase.');
+  };
+
+module.exports = supabase;
