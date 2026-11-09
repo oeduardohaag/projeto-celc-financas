@@ -9,7 +9,7 @@ const contasSchema = z.object({
     errorMap: () => ({ message: "Categoria inválida" }) 
   }),
   valor: z.number().positive('O valor deve ser maior que zero'),
-  status: z.enum(['Pendente', 'Pago', 'Atrasado'], { 
+  status_conta: z.enum(['Pendente', 'Pago', 'Atrasado'], { 
     errorMap: () => ({ message: "O status deve ser 'Pendente', 'Pago' ou 'Atrasado'" }) 
   }),
   data_vencimento: z.string().min(1, 'A data de vencimento é obrigatória'),

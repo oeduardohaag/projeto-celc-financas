@@ -9,7 +9,7 @@ const contasModel = {
       categoria,
       valor,
       metodo_pgto,
-      status,
+      status_conta,
       data_vencimento,
       data_pgto,
       membro_id
@@ -17,7 +17,7 @@ const contasModel = {
 
     const query = `
       INSERT INTO contas (
-        nome_conta, classificacao, categoria, valor, metodo_pgto status, data_vencimento, data_pgto, membro_id)
+        nome_conta, classificacao, categoria, valor, metodo_pgto, status_conta, data_vencimento, data_pgto, membro_id)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *;
     `;
@@ -28,7 +28,7 @@ const contasModel = {
       categoria,
       valor,
       metodo_pgto,
-      status || 'Pendente',
+      status_conta || 'Pendente',
       data_vencimento,
       data_pgto || null,
       membro_id || null
@@ -65,9 +65,9 @@ const contasModel = {
       conditions.push(`c.metodo_pgto = $${values.length}`);
     }
 
-    if (filtros.status) {
-      values.push(filtros.status);
-      conditions.push(`c.status = $${values.length}`);
+    if (filtros.status_conta) {
+      values.push(filtros.status_conta);
+      conditions.push(`c.status_conta = $${values.length}`);
     }
 
     if (conditions.length > 0) {
@@ -110,15 +110,21 @@ const contasModel = {
       categoria,
       valor,
       metodo_pgto,
-      status,
+      status_conta,
       data_vencimento,
       data_pgto,
       membro_id
     } = dados;
 
-    // Trata valores nulos ou vazios para não quebrar o PostgreSQL
     const membroIdFinal = membro_id ? parseInt(membro_id, 10) : null;
-    const dataPgtoFinal = data_pgto && data_pgto.trim() !== '' ? data_pgto : null;
+    const statusFinal = status_conta || 'Pendente';
+
+    let dataPgtoFinal = null;
+    if (statusFinal === 'Pago') {
+      dataPgtoFinal = (data_pgto && data_pgto.trim() !== '')
+        ? data_pgto
+        : new Date().toISOString().split('T')[0];
+    }
 
     const query = `
       UPDATE contas
@@ -126,8 +132,8 @@ const contasModel = {
           classificacao = $2, 
           categoria = $3, 
           valor = $4, 
-          metodo_pgto = $5
-          status = $6, 
+          metodo_pgto = $5,
+          status_conta = $6, 
           data_vencimento = $7, 
           data_pgto = $8, 
           membro_id = $9
@@ -141,7 +147,7 @@ const contasModel = {
       categoria,
       valor,
       metodo_pgto,
-      status || 'Pendente',
+      statusFinal,
       data_vencimento,
       dataPgtoFinal,
       membroIdFinal,
@@ -153,15 +159,15 @@ const contasModel = {
   },
 
   // Função para atualizar apenas o status (caso queira manter a função anterior)
-  async atualizarStatus(id, status, data_pgto = null) {
-    const dataPagamentoFinal = status === 'Pago' ? (data_pgto || new Date()) : null;
+  async atualizarStatus(id, status_conta, data_pgto = null) {
+    const dataPagamentoFinal = status_conta === 'Pago' ? (data_pgto || new Date()) : null;
     const query = `
       UPDATE contas
-      SET status = $1, data_pgto = $2
+      SET status_conta = $1, data_pgto = $2
       WHERE id = $3
       RETURNING *;
     `;
-    const { rows } = await pool.query(query, [status, dataPagamentoFinal, id]);
+    const { rows } = await pool.query(query, ["status_conta", dataPagamentoFinal, id]);
     return rows[0];
   },
 
