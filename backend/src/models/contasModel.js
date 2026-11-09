@@ -76,7 +76,7 @@ const contasModel = {
 
     query += ` ORDER BY c.data_vencimento DESC`;
 
-    const { rows } = await supabase.query(query, values);
+    const { rows } = await pool.query(query, values);
     return rows;
   },
 
