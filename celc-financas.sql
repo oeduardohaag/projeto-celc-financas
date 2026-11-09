@@ -40,6 +40,12 @@ CREATE TABLE contas (
 		(status != 'Pago' AND data_pgto IS NULL)	
 	)
 );
+
+CREATE TABLE configuracoes (
+  id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  saldo_inicial_banco    NUMERIC(12,2) NOT NULL DEFAULT 0,
+  saldo_inicial_dinheiro NUMERIC(12,2) NOT NULL DEFAULT 0
+);
 -------------------------------------------------------------------------------------------------------- 
 -- Inputs para Testes
 -- 1. Inserts para a tabela diretoria
