@@ -24,52 +24,46 @@ function formatarReais(valor) {
 function LayoutFinanceiro() {
   const navigate = useNavigate()
 
-  // Saldo inicial definido nas configurações lido do localStorage ou coloca um saldo padrão de R$ 10.000,00
-  const [saldoInicial, setSaldoInicial] = useState(() => {
-    const salvo = localStorage.getItem('celc_saldo_inicial')
-    return salvo !== null ? Number(salvo) : 10000
-  })
+  // Saldos calculados pelo backend (saldo inicial + movimentações pagas)
+  const [saldos, setSaldos] = useState({ saldo_banco: 0, saldo_dinheiro: 0 })
+  const [saldoTotal, setSaldoTotal] = useState('')
+  const [saldoTotalDinheiro, setSaldoTotalDinheiro] = useState('')
 
   // Lista de contas/transações vindas da API
   const [contas, setContas] = useState([])
 
-  // Busca as contas da API ao carregar o layout
+async function carregarSaldos() {
+    try {
+      const { data } = await api.get('/contas/dashboard/saldos')
+      if (data && data.resumo) {
+        setSaldos(data.resumo) // Garante que lê a propriedade correta enviada pelo backend
+      }
+    } catch (erro) {
+      console.error('Erro ao carregar saldos:', erro)
+    }
+  }
+
   useEffect(() => {
-    async function carregarContasLayout() {
+    async function carregarDadosFinanceiros() {
       try {
-        const resposta = await api.get('/contas')
-        const dadosContas = Array.isArray(resposta.data)
-          ? resposta.data
-          : (resposta.data.contas || resposta.data.dados || [])
+        const respostaContas = await api.get('/contas')
+        const dadosContas = Array.isArray(respostaContas.data)
+          ? respostaContas.data
+          : (respostaContas.data.contas || respostaContas.data.dados || [])
         setContas(dadosContas)
+
+        await carregarSaldos()
       } catch (erro) {
-        console.error('Erro ao carregar contas no layout:', erro)
+        console.error('Erro ao carregar dados financeiros no layout:', erro)
       }
     }
-    carregarContasLayout()
+    carregarDadosFinanceiros()
   }, [])
-
-  // Calculo do saldo total: Saldo Inicial + (Receitas - Despesas)
-  const saldoTotal = contas.reduce((total, conta) => {
-    const valor = Number(conta.valor) || 0
-    if (conta.classificacao === 'Receita' && conta.metodo_pgto !== 'Dinheiro') {
-      return total + valor
-    } else if (conta.classificacao === 'Despesa' && conta.metodo_pgto !== 'Dinheiro') {
-      return total - valor
-    }
-    return total
-  }, Number(saldoInicial) || 0)
-
-  // Calculo do saldo total em dinehiro: Saldo Inicial + (Receitas - Despesas) apenas de Dinheiro
-  const saldoTotalDinheiro = contas.reduce((total, conta) => {
-    const valor = Number(conta.valor) || 0
-    if (conta.classificacao === 'Receita' && conta.metodo_pgto === 'Dinheiro') {
-      return total + valor
-    } else if (conta.classificacao === 'Despesa' && conta.metodo_pgto === 'Dinheiro') {
-      return total - valor
-    }
-    return total
-  }, Number(saldoInicial) || 0)
+  
+  // Busca os saldos ao carregar o layout
+  useEffect(() => {
+    carregarSaldos()
+  }, [])
 
   // Retorna à tela de login.
   function sairDaConta() {
@@ -127,7 +121,7 @@ function LayoutFinanceiro() {
             <span>Gráficos</span>
           </NavLink>
 
-          <NavLink
+          <NavLink  style={{marginBottom: '18px'}}
             to="/membros"
             className={({ isActive }) =>
               isActive ? 'finance-link active' : 'finance-link'
@@ -181,7 +175,7 @@ function LayoutFinanceiro() {
               <span>Saldo Bancário</span>
 
               <strong>
-                {formatarReais(saldoTotal)}
+                {formatarReais(saldos.saldo_banco)}
               </strong>
             </div>
 
@@ -189,7 +183,7 @@ function LayoutFinanceiro() {
               <span>Saldo em Dinheiro</span>
 
               <strong>
-                {formatarReais(saldoTotalDinheiro)}
+                {formatarReais(saldos.saldo_dinheiro)}
               </strong>
             </div>
 
@@ -203,9 +197,8 @@ function LayoutFinanceiro() {
             context={{
               contas,
               setContas,
-              saldoInicial,
-              setSaldoInicial,
-              saldoTotal,
+              saldos,
+              recarregarSaldos: carregarSaldos,
             }}
           />
 
