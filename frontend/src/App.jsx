@@ -2,18 +2,8 @@ import {
   Routes,
   Route,
   Navigate,
-  useNavigate,
-
+  useNavigate
 } from 'react-router-dom'
-
-import {
-  Settings,
-  LogOut,
-  CircleUser,
-  Wallet,
-  FileText,
-  ChartNoAxesColumn,
-} from 'lucide-react'
 
 import './App.css'
 
