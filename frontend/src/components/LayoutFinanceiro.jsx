@@ -52,9 +52,9 @@ function LayoutFinanceiro() {
   // Calculo do saldo total: Saldo Inicial + (Receitas - Despesas)
   const saldoTotal = contas.reduce((total, conta) => {
     const valor = Number(conta.valor) || 0
-    if (conta.classificacao === 'Receita') {
+    if (conta.classificacao === 'Receita' && conta.metodo_pgto !== 'Dinheiro') {
       return total + valor
-    } else if (conta.classificacao === 'Despesa') {
+    } else if (conta.classificacao === 'Despesa' && conta.metodo_pgto !== 'Dinheiro') {
       return total - valor
     }
     return total
@@ -63,9 +63,9 @@ function LayoutFinanceiro() {
   // Calculo do saldo total em dinehiro: Saldo Inicial + (Receitas - Despesas) apenas de Dinheiro
   const saldoTotalDinheiro = contas.reduce((total, conta) => {
     const valor = Number(conta.valor) || 0
-    if (conta.classificacao === 'Receita' && conta.tipo === 'Dinheiro') {
+    if (conta.classificacao === 'Receita' && conta.metodo_pgto === 'Dinheiro') {
       return total + valor
-    } else if (conta.classificacao === 'Despesa'&& conta.tipo === 'Dinheiro') {
+    } else if (conta.classificacao === 'Despesa' && conta.metodo_pgto === 'Dinheiro') {
       return total - valor
     }
     return total
