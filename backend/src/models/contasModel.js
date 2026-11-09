@@ -17,8 +17,8 @@ const contasModel = {
 
     const query = `
       INSERT INTO contas (
-        nome_conta, classificacao, categoria, valor, status, data_vencimento, data_pgto, membro_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        nome_conta, classificacao, categoria, valor, metodo_pgto status, data_vencimento, data_pgto, membro_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *;
     `;
 
@@ -126,11 +126,12 @@ const contasModel = {
           classificacao = $2, 
           categoria = $3, 
           valor = $4, 
-          status = $5, 
-          data_vencimento = $6, 
-          data_pgto = $7, 
-          membro_id = $8
-      WHERE id = $9
+          metodo_pgto = $5
+          status = $6, 
+          data_vencimento = $7, 
+          data_pgto = $8, 
+          membro_id = $9
+      WHERE id = $10
       RETURNING *;
     `;
 
