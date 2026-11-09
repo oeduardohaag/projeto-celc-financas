@@ -29,6 +29,7 @@ CREATE TABLE contas (
 	classificacao tipo_classificacao_conta NOT NULL,
 	categoria tipo_categoria_conta NOT NULL,
 	valor NUMERIC(10,2) NOT NULL,
+	metodo_pgto tipo_metodo_pgto NOT NULL
 	status tipo_status_conta NOT NULL,
 	data_vencimento DATE NOT NULL,
 	data_pgto TIMESTAMP,
