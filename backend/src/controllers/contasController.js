@@ -1,3 +1,4 @@
+
 const contasModel = require('../models/contasModel');
 const dashboardModel = require('../models/dashboardModel');
 const { contasSchema } = require('../schemas/contasSchema');
@@ -20,7 +21,7 @@ const contasController = {
       const filtros = {
         classificacao: req.query.classificacao,
         categoria: req.query.categoria,
-        status: req.query.status
+        status_conta: req.query.status_conta
       };
 
       const contas = await contasModel.listarContas(filtros);
@@ -64,12 +65,13 @@ const contasController = {
     }
   },
 
+  // Função para atualizar o status da conta 
   async atualizarStatus(req, res, next) {
     try {
       const { id } = req.params;
-      const { status, data_pgto } = req.body;
+      const { status_conta, data_pgto } = req.body;
 
-      const contaAtualizada = await contasModel.atualizarStatus(id, status, data_pgto);
+      const contaAtualizada = await contasModel.atualizarStatus(id, status_conta, data_pgto);
 
       if (!contaAtualizada) {
         return res.status(404).json({ status: 'erro', mensagem: 'Conta não encontrada' });
@@ -82,7 +84,7 @@ const contasController = {
   },
 
   // Função para deletar uma conta pelo ID
-  async deletarConta(req, res, next) {
+    async deletarConta(req, res, next) {
     try {
       const { id } = req.params;
       const deletado = await contasModel.deletarConta(id);
@@ -97,11 +99,40 @@ const contasController = {
     }
   },
 
-  // Função para obter o resumo geral das contas
-  async resumoDashboard(req, res, next) {
+  // Função para obter o resumo/saldo consolidado (banco e dinheiro)
+  async consultarSaldos(req, res, next) {
     try {
-      const resumo = await dashboardModel.obterResumoGeral();
-      return res.json({ status: 'sucesso', dados: resumo });
+      const resumo = await dashboardModel.consultarSaldos();
+      return res.json({ status: 'sucesso', resumo });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Função para obter o resumo geral das contas
+  async obterConfiguracoes(req, res, next) {
+    try {
+      const config = await dashboardModel.obterConfiguracoes();
+      return res.json({ status: 'sucesso', dados: config });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async salvarConfiguracoes(req, res, next) {
+    try {
+      const saldo_inicial_banco = Number(req.body.saldo_inicial_banco);
+      const saldo_inicial_dinheiro = Number(req.body.saldo_inicial_dinheiro);
+
+      if (Number.isNaN(saldo_inicial_banco) || Number.isNaN(saldo_inicial_dinheiro)) {
+        return res.status(400).json({ status: 'erro', mensagem: 'Valores de saldo inválidos' });
+      }
+
+      const config = await dashboardModel.salvarConfiguracoes({
+        saldo_inicial_banco,
+        saldo_inicial_dinheiro,
+      });
+      return res.json({ status: 'sucesso', dados: config });
     } catch (error) {
       next(error);
     }
