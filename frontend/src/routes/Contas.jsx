@@ -5,7 +5,10 @@ import api from '../services/api'
 import './Contas.css'
 
 function Contas() {
-  const { saldoTotal } = useOutletContext()
+  const { saldos, recarregarSaldos } = useOutletContext()
+
+  // Saldo total = saldo bancário + saldo em dinheiro (calculados pelo backend)
+  const saldoTotal = (Number(saldos?.saldo_banco) || 0) + (Number(saldos?.saldo_dinheiro) || 0)
 
   const [contas, setContas] = useState([])
   const [membros, setMembros] = useState([])
@@ -18,7 +21,8 @@ function Contas() {
   const [classificacao, setClassificacao] = useState('Receita')
   const [categoria, setCategoria] = useState('Dízimo')
   const [valor, setValor] = useState('')
-  const [status, setStatus] = useState('Pendente')
+  const [metodoPgto, setMetodoPgto] = useState('')
+  const [statusConta, setStatusConta] = useState('Pendente')
   const [dataVencimento, setDataVencimento] = useState('')
   const [dataPgto, setDataPgto] = useState('')
   const [membroId, setMembroId] = useState('')
@@ -26,8 +30,24 @@ function Contas() {
   // Filtros de pesquiso
   const [filtroClassificacao, setFiltroClassificacao] = useState('')
   const [filtroCategoria, setFiltroCategoria] = useState('')
-  const [filtroStatus, setFiltroStatus] = useState('')
+  const [filtroMetodoPgto, setFiltroMetodoPgto] = useState('')
+  const [filtroStatusConta, setFiltroStatusConta] = useState('')
   const [filtroMes, setFiltroMes] = useState('')
+
+  // Formata a data para ser exibida no padrão brasileiro
+  function formatarData(dataIso) {
+    // Retorna um traço se a data for nula, vazia ou indefinida
+    if (!dataIso) return '-';
+
+    // Garante que é string e divide com segurança
+    const dataPura = String(dataIso).split('T')[0];
+    const partes = dataPura.split('-');
+
+    if (partes.length !== 3) return '';
+
+    const [ano, mes, dia] = partes;
+    return `${dia}/${mes}/${ano}`;
+  }
 
   // Formata os valores para reais.
   function formatarReais(valor) {
@@ -74,7 +94,8 @@ function Contas() {
     setClassificacao('Receita')
     setCategoria('Dízimo')
     setValor('')
-    setStatus('Pendente')
+    setMetodoPgto('')
+    setStatusConta('Pendente')
     setDataVencimento('')
     setDataPgto('')
     setMembroId('')
@@ -88,7 +109,8 @@ function Contas() {
     setClassificacao(conta.classificacao || 'Receita')
     setCategoria(conta.categoria || 'Dízimo')
     setValor(conta.valor || '')
-    setStatus(conta.status || 'Pendente')
+    setMetodoPgto(conta.metodo_pgto || '')
+    setStatusConta(conta.status_conta || 'Pendente')
     setDataVencimento(conta.data_vencimento ? conta.data_vencimento.split('T')[0] : '')
     setDataPgto(conta.data_pgto ? conta.data_pgto.split('T')[0] : '')
     setMembroId(conta.membro_id || '')
@@ -104,6 +126,11 @@ function Contas() {
       return
     }
 
+    if (!metodoPgto) {
+      alert('Selecione o método de pagamento.')
+      return
+    }
+
     const valorNumerico = Number(valor)
     if (!Number.isFinite(valorNumerico) || valorNumerico <= 0) {
       alert('O valor deve ser maior que zero.')
@@ -115,9 +142,10 @@ function Contas() {
       classificacao,
       categoria,
       valor: valorNumerico,
-      status,
+      metodo_pgto: metodoPgto,
+      status_conta: statusConta,
       data_vencimento: dataVencimento,
-      data_pgto: status === 'Pendente' ? null : (dataPgto ? dataPgto : null),
+      data_pgto: statusConta === 'Pendente' ? null : (dataPgto ? dataPgto : null),
       membro_id: membroId ? Number(membroId) : null,
     }
 
@@ -133,6 +161,7 @@ function Contas() {
 
       setModalAberto(false)
       carregarDadosIniciais()
+      if (recarregarSaldos) recarregarSaldos()
     } catch (erro) {
       console.error('Erro ao salvar conta:', erro)
       alert(erro.response?.data?.erro || 'Erro ao processar a operação.')
@@ -148,6 +177,7 @@ function Contas() {
         await api.delete(`/contas/${id}`)
         alert('Conta excluída com sucesso!')
         carregarDadosIniciais()
+        if (recarregarSaldos) recarregarSaldos()
       } catch (erro) {
         console.error('Erro ao excluir conta:', erro)
         alert('Erro ao tentar excluir a conta.')
@@ -158,7 +188,8 @@ function Contas() {
   const contasFiltradas = Array.isArray(contas) ? contas.filter((conta) => {
     const matchClassificacao = filtroClassificacao ? conta.classificacao === filtroClassificacao : true
     const matchCategoria = filtroCategoria ? conta.categoria === filtroCategoria : true
-    const matchStatus = filtroStatus ? conta.status === filtroStatus : true
+    const matchMetodoPgto = filtroMetodoPgto ? conta.metodo_pgto === filtroMetodoPgto : true
+    const matchStatusConta = filtroStatusConta ? conta.status_conta === filtroStatusConta : true
 
     let matchMes = true
     if (filtroMes && conta.data_vencimento) {
@@ -168,7 +199,7 @@ function Contas() {
       matchMes = false
     }
 
-    return matchClassificacao && matchCategoria && matchStatus && matchMes
+    return matchClassificacao && matchCategoria && matchMetodoPgto && matchStatusConta && matchMes
   }) : []
 
   return (
@@ -212,7 +243,7 @@ function Contas() {
           </div>
         </div>
 
-        <div className="contas-filtros"> 
+        <div className="contas-filtros">
           <div>
             <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Classificação</label>
             <select value={filtroClassificacao} onChange={(e) => setFiltroClassificacao(e.target.value)}>
@@ -238,8 +269,20 @@ function Contas() {
           </div>
 
           <div>
+            <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Método de Pagamento</label>
+            <select value={filtroMetodoPgto} onChange={(e) => setFiltroMetodoPgto(e.target.value)}>
+              <option value="">Todos</option>
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="PIX">PIX</option>
+              <option value="Débito">Débito</option>
+              <option value="Crédito">Crédito</option>
+              <option value="Boleto">Boleto</option>
+            </select>
+          </div>
+
+          <div>
             <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Status</label>
-            <select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)}>
+            <select value={filtroStatusConta} onChange={(e) => setFiltroStatusConta(e.target.value)}>
               <option value="">Todos</option>
               <option value="Pendente">Pendente</option>
               <option value="Pago">Pago</option>
@@ -265,6 +308,7 @@ function Contas() {
                 <th>Classificação</th>
                 <th>Categoria</th>
                 <th>Valor</th>
+                <th>Método de Pagamento</th>
                 <th>Status</th>
                 <th>Vencimento</th>
                 <th>Pagamento</th>
@@ -276,7 +320,7 @@ function Contas() {
             <tbody>
               {carregando ? (
                 <tr>
-                  <td colSpan="9" className="contas-vazias">A carregar contas...</td>
+                  <td colSpan="10" className="contas-vazias">A carregar contas...</td>
                 </tr>
               ) : (
                 Array.isArray(contasFiltradas) && contasFiltradas.map((conta) => (
@@ -285,13 +329,14 @@ function Contas() {
                     <td>{conta.classificacao}</td>
                     <td>{conta.categoria}</td>
                     <td>{formatarReais(conta.valor)}</td>
+                    <td>{conta.metodo_pgto}</td>
                     <td>
-                      <span className={`status-badge status-${conta.status?.toLowerCase()}`}>
-                        {conta.status}
+                      <span className={`status-badge status-${conta.status_conta?.toLowerCase()}`}>
+                        {conta.status_conta}
                       </span>
                     </td>
-                    <td>{conta.data_vencimento ? conta.data_vencimento.split('T')[0] : '-'}</td>
-                    <td>{conta.data_pgto ? conta.data_pgto.split('T')[0] : '-'}</td>
+                    <td>{formatarData(conta.data_vencimento)}</td>
+                    <td>{formatarData(conta.data_pgto)}</td>
                     <td>{conta.nome_membro || conta.membro_nome || '-'}</td>
                     <td className="actions-cell">
                       <button
@@ -319,7 +364,7 @@ function Contas() {
 
               {!carregando && (!Array.isArray(contas) || contas.length === 0) && (
                 <tr>
-                  <td colSpan="9" className="contas-vazias">
+                  <td colSpan="10" className="contas-vazias">
                     Nenhuma conta cadastrada.
                   </td>
                 </tr>
@@ -412,11 +457,26 @@ function Contas() {
                 required
               />
 
+              <label htmlFor="metodo-conta">Método de Pagamento</label>
+              <select
+                id="metodo-conta"
+                value={metodoPgto}
+                onChange={(e) => setMetodoPgto(e.target.value)}
+                required
+              >
+                <option value="">Selecione o método</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="PIX">PIX</option>
+                <option value="Débito">Débito</option>
+                <option value="Crédito">Crédito</option>
+                <option value="Boleto">Boleto</option>
+              </select>
+
               <label htmlFor="status-conta">Status</label>
               <select
                 id="status-conta"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                value={statusConta}
+                onChange={(e) => setStatusConta(e.target.value)}
               >
                 <option value="Pendente">Pendente</option>
                 <option value="Pago">Pago</option>
