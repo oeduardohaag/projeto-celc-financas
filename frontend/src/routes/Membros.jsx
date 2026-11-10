@@ -18,6 +18,21 @@ function Membros() {
   const [telefone, setTelefone] = useState('')
   const [filhos, setFilhos] = useState(0)
 
+  // Formata a data para ser exibida no padrão brasileiro
+  function formatarData(dataIso) {
+    // Retorna um traço se a data for nula, vazia ou indefinida
+    if (!dataIso) return '-';
+
+    // Garante que é string e divide com segurança
+    const dataPura = String(dataIso).split('T')[0];
+    const partes = dataPura.split('-');
+
+    if (partes.length !== 3) return '';
+
+    const [ano, mes, dia] = partes;
+    return `${dia}/${mes}/${ano}`;
+  }
+
   // 1. BUSCAR MEMBROS AO CARREGAR A PÁGINA (GET /membros)
   async function carregarMembros() {
     try {
@@ -157,6 +172,7 @@ function Membros() {
       </header>
 
       <section className="membros-resumo">
+
         <article className="membro-resumo-card">
           <div className="membro-resumo-icon">
             <Users size={22} />
@@ -175,6 +191,7 @@ function Membros() {
             <small>Total de membro(s) de aniversário este mês</small>
           </div>
         </article>
+
       </section>
 
       <section className="membros-lista-section">
@@ -211,7 +228,7 @@ function Membros() {
                   <tr key={membro.id || membro.membro_id}>
                     <td>{membro.nome}</td>
                     <td>{membro.cpf}</td>
-                    <td>{membro.data_nascimento ? membro.data_nascimento.split('T')[0] : '-'}</td>
+                    <td>{formatarData(membro.data_nascimento)}</td>
                     <td>{membro.estado_civil}</td>
                     <td>{membro.sexo}</td>
                     <td>{membro.telefone}</td>
