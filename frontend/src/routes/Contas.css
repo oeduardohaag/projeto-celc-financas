@@ -40,7 +40,7 @@
   padding: 0 18px;
   border: 0;
   border-radius: 9px;
-  background: #d4af37;
+  background: #F2B705;
   color: #2A2A2A;
   font-weight: 700;
   cursor: pointer;
@@ -154,13 +154,13 @@
 
 .contas-filtros select:hover,
 .contas-filtros input:hover {
-  border-color: #9ca3af;
+  border-color: #F6D365;
 }
 
 .contas-filtros select:focus,
 .contas-filtros input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: #F6D365;
+  box-shadow: 0 0 0 3px rgba(235, 205, 37, 0.1);
 }
 
 .accounts-table-wrapper {

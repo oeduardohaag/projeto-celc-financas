@@ -148,7 +148,7 @@ export default function Configuracoes() {
             </label>
 
           </div>
-        </section>
+        </section>""
 
         <div className="configuracoes-acoes">
 
