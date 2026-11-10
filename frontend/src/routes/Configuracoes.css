@@ -39,7 +39,7 @@
   margin: 0 0 8px;
   font-size: 28px;
   font-weight: 700;
-  color: #172554;
+  color: #2A2A2A;
 }
 
 .configuracoes-titulo p {
@@ -107,10 +107,7 @@
   flex-direction: column;
   gap: 9px;
 }
-
-.configuracoes-campo:last-child {
-  grid-column: 1 / -1;
-}
+ 
 
 .configuracoes-campo span {
   color: #334155;
@@ -133,8 +130,7 @@
 }
 
 .configuracoes-campo input:focus {
-  border-color: #3156a6;
-  box-shadow: 0 0 0 3px rgba(49, 86, 166, 0.12);
+  box-shadow: 0 0 0 3px rgba(235, 205, 37, 0.1);
 }
 
 .configuracoes-campo input::placeholder {

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
+import api from "../services/api";
 
 import {
   Settings,
@@ -14,7 +15,7 @@ import {
 import "./Configuracoes.css";
 
 export default function Configuracoes() {
-  const { saldoInicial = 10000, setSaldoInicial } = useOutletContext() || {};
+  const { recarregarSaldos } = useOutletContext() || {};
 
   const [instituicao, setInstituicao] = useState({
     nome: "CELC",
@@ -22,11 +23,29 @@ export default function Configuracoes() {
     telefone: ""
   });
 
-  const [saldoBancario, setSaldoBancario] = useState(saldoInicial);
-  const [saldoDinheiro, setSaldoDinheiro] = useState(saldoInicial);
+  // Saldos iniciais (guardados no banco, na tabela configuracoes)
+  const [saldoBancario, setSaldoBancario] = useState("");
+  const [saldoDinheiro, setSaldoDinheiro] = useState("");
+  const [salvando, setSalvando] = useState(false);
+
   const [aparencia, setAparencia] = useState("claro");
   const [notificacoes, setNotificacoes] = useState(true);
   const [mensagem, setMensagem] = useState("");
+
+  // Carrega os saldos iniciais do banco ao abrir a tela
+  useEffect(() => {
+    async function carregarConfiguracoes() {
+      try {
+        const { data } = await api.get("contas/configuracoes");
+        setSaldoBancario(Number(data.dados.saldo_inicial_banco));
+        setSaldoDinheiro(Number(data.dados.saldo_inicial_dinheiro));
+      } catch (erro) {
+        console.error("Erro ao carregar configurações:", erro);
+        setMensagem("Não foi possível carregar os saldos iniciais.");
+      }
+    }
+    carregarConfiguracoes();
+  }, []);
 
   function atualizarInstituicao(event) {
     const { name, value } = event.target;
@@ -37,28 +56,29 @@ export default function Configuracoes() {
     }));
   }
 
-  function salvarConfiguracoes(event) {
+  async function salvarConfiguracoes(event) {
     event.preventDefault();
+    setMensagem("");
+    setSalvando(true);
 
-    const novoSaldo = Number(saldoBancario) || 0;
-    if (setSaldoInicial) {
-      setSaldoInicial(novoSaldo);
+    try {
+      await api.put("contas/configuracoes", {
+        saldo_inicial_banco: Number(saldoBancario) || 0,
+        saldo_inicial_dinheiro: Number(saldoDinheiro) || 0,
+      });
+
+      // Atualiza o cabeçalho com os novos saldos
+      if (recarregarSaldos) {
+        await recarregarSaldos();
+      }
+
+      setMensagem("Configurações e saldos iniciais salvos com sucesso!");
+    } catch (erro) {
+      console.error("Erro ao salvar configurações:", erro);
+      setMensagem("Erro ao salvar as configurações. Tente novamente.");
+    } finally {
+      setSalvando(false);
     }
-    localStorage.setItem('celc_saldo_inicial', novoSaldo);
-
-    setMensagem(
-      "Configurações e saldo bancário salvos com sucesso!"
-    );
-
-    const novoSaldoDinheiro = Number(saldoBancario) || 0;
-    if (setSaldoInicial) {
-      setSaldoInicial(novoSaldoDinheiro);
-    }
-    localStorage.setItem('celc_saldo_dinheiro', novoSaldoDinheiro);
-
-    setMensagem(
-      "Configurações e saldo bancário salvos com sucesso!"
-    );
   }
 
   return (
@@ -84,7 +104,6 @@ export default function Configuracoes() {
         onSubmit={salvarConfiguracoes}
       >
 
-        {/* CARD DE SALDO BANCÁRIO INICIAL */}
         <section className="configuracoes-card">
 
           <div className="configuracoes-card-header">
@@ -95,7 +114,7 @@ export default function Configuracoes() {
 
             <div>
               <h2>Conta bancária e saldo inicial</h2>
-              <p>Defina o saldo base da sua conta bancária.</p>
+              <p>Defina o saldo base da conta bancária e do dinheiro em caixa.</p>
             </div>
 
           </div>
@@ -114,7 +133,7 @@ export default function Configuracoes() {
                 placeholder="Ex.: 10000.00"
               />
             </label>
-            
+
             <label className="configuracoes-campo">
               <span>Saldo inicial em dinheiro (R$)</span>
 
@@ -131,150 +150,6 @@ export default function Configuracoes() {
           </div>
         </section>
 
-        <section className="configuracoes-card">
-
-          <div className="configuracoes-card-header">
-
-            <div className="configuracoes-card-icone">
-              <Building2 size={22} />
-            </div>
-
-            <div>
-              <h2>Dados da instituição</h2>
-              <p>Informações gerais para identificação do sistema.</p>
-            </div>
-
-          </div>
-
-          <div className="configuracoes-campos">
-
-            <label className="configuracoes-campo">
-              <span>Nome da instituição</span>
-
-              <input
-                type="text"
-                name="nome"
-                value={instituicao.nome}
-                onChange={atualizarInstituicao}
-                placeholder="Digite o nome da instituição"
-              />
-            </label>
-
-            <label className="configuracoes-campo">
-              <span>E-mail de contato</span>
-
-              <input
-                type="email"
-                name="email"
-                value={instituicao.email}
-                onChange={atualizarInstituicao}
-                placeholder="contato@instituicao.com"
-              />
-            </label>
-
-            <label className="configuracoes-campo">
-              <span>Telefone</span>
-
-              <input
-                type="tel"
-                name="telefone"
-                value={instituicao.telefone}
-                onChange={atualizarInstituicao}
-                placeholder="(00) 00000-0000"
-              />
-            </label>
-
-          </div>
-        </section>
-
-        <section className="configuracoes-card">
-
-          <div className="configuracoes-card-header">
-
-            <div className="configuracoes-card-icone">
-              <Palette size={22} />
-            </div>
-
-            <div>
-              <h2>Aparência</h2>
-              <p>Escolha a aparência desejada para o sistema.</p>
-            </div>
-
-          </div>
-
-          <div className="configuracoes-opcoes">
-
-            <label className="configuracoes-opcao">
-              <div>
-                <strong>Tema claro</strong>
-                <p>Fundo claro e conteúdo com alto contraste.</p>
-              </div>
-
-              <input
-                type="radio"
-                name="aparencia"
-                value="claro"
-                checked={aparencia === "claro"}
-                onChange={(event) => setAparencia(event.target.value)}
-              />
-            </label>
-
-            <label className="configuracoes-opcao">
-              <div>
-                <strong>Tema escuro</strong>
-                <p>Aparência escura para reduzir o brilho da tela.</p>
-              </div>
-
-              <input
-                type="radio"
-                name="aparencia"
-                value="escuro"
-                checked={aparencia === "escuro"}
-                onChange={(event) => setAparencia(event.target.value)}
-              />
-            </label>
-
-          </div>
-        </section>
-
-        <section className="configuracoes-card">
-
-          <div className="configuracoes-card-header">
-
-            <div className="configuracoes-card-icone">
-              <Bell size={22} />
-            </div>
-
-            <div>
-              <h2>Notificações</h2>
-              <p>Controle suas preferências de comunicação.</p>
-            </div>
-
-          </div>
-
-          <label className="configuracoes-opcao">
-
-            <div>
-              <strong>Ativar notificações</strong>
-              <p>Permite habilitar ou desabilitar notificações do sistema.</p>
-            </div>
-
-            <input
-              className="configuracoes-switch"
-              type="checkbox"
-              checked={notificacoes}
-              onChange={(event) => setNotificacoes(event.target.checked)}
-            />
-
-          </label>
-        </section>
-
-        {mensagem && (
-          <div className="configuracoes-mensagem" role="status">
-            {mensagem}
-          </div>
-        )}
-
         <div className="configuracoes-acoes">
 
           <button
@@ -286,9 +161,8 @@ export default function Configuracoes() {
                 email: "",
                 telefone: ""
               });
-              setSaldoBancario(10000);
-              if (setSaldoInicial) setSaldoInicial(10000);
-              localStorage.removeItem('celc_saldo_inicial');
+              setSaldoBancario(0);
+              setSaldoDinheiro(0);
               setAparencia("claro");
               setNotificacoes(true);
               setMensagem("");
@@ -301,9 +175,10 @@ export default function Configuracoes() {
           <button
             type="submit"
             className="configuracoes-botao principal"
+            disabled={salvando}
           >
             <Save size={18} />
-            Salvar configurações
+            {salvando ? "Salvando..." : "Salvar configurações"}
           </button>
 
         </div>
