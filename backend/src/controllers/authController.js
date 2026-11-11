@@ -83,7 +83,7 @@ const authController = {
     });
   },
 
-  async me(req, res) {
+  async session(req, res) {
     try {
       const usuario = await authModel.buscarPorId(req.usuarioId);
 

@@ -15,7 +15,7 @@ const limiteLogin = rateLimit({
 });
 
 router.post('/login', limiteLogin, authController.login);
-router.get('/me', authMiddleware, authController.me);
+router.get('/session', authMiddleware, authController.session);
 router.post('/logout', authController.logout);
 
 module.exports = router;

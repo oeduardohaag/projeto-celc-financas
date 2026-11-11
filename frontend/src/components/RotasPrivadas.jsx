@@ -7,7 +7,7 @@ function RotaPrivada() {
 
   useEffect(() => {
     // Verifica no backend se o cookie está válido
-    api.get('/auth/me')
+    api.get('/auth/session')
       .then(() => setAutenticado(true))
       .catch(() => setAutenticado(false));
   }, []);
