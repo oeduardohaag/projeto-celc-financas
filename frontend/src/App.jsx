@@ -14,6 +14,7 @@ import Graficos from './routes/Graficos'
 import Configuracoes from './routes/Configuracoes'
 import Membros from './routes/Membros'
 import LayoutFinanceiro from './components/LayoutFinanceiro'
+import RotasPrivada from './components/RotasPrivadas'
 
 function App() {
   const navigate = useNavigate()
@@ -30,41 +31,38 @@ function App() {
         element={<Login onEntrar={() => navigate('/contas')} />}
       />
 
-      <Route element={<LayoutFinanceiro />}>
-        <Route
-          path="/dashboard"
-          element={<Navigate to="/contas" replace />}
-        />
+      <Route element={<RotasPrivada />}>
+        <Route element={<LayoutFinanceiro />}>
+          <Route
+            path="/dashboard"
+            element={<Navigate to="/contas" replace />}
+          />
 
-        <Route
-          path="/home"
-          element={<Navigate to="/contas" replace />}
-        />
+          <Route
+            path="membros"
+            element={<Membros />}
+          />
 
-        <Route 
-          path="membros" 
-          element={<Membros />} 
-        />
+          <Route
+            path="/contas"
+            element={<Contas />}
+          />
 
-        <Route
-          path="/contas"
-          element={<Contas />}
-        />
+          <Route
+            path="/relatorios"
+            element={<Relatorios onVoltar={() => navigate('/contas')} />}
+          />
 
-        <Route
-          path="/relatorios"
-          element={<Relatorios onVoltar={() => navigate('/contas')} />}
-        />
+          <Route
+            path="/graficos"
+            element={<Graficos />}
+          />
 
-        <Route
-          path="/graficos"
-          element={<Graficos />}
-        />
-
-        <Route
-          path="/configuracoes"
-          element={<Configuracoes />}
-        />
+          <Route
+            path="/configuracoes"
+            element={<Configuracoes />}
+          />
+        </Route>
       </Route>
 
       <Route
