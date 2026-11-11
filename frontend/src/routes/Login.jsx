@@ -39,7 +39,7 @@ function Login({ onEntrar }) {
       <div className="login-card">
         <header className="login-header">
           <h1>CELC Finanças</h1>
-          <p>Faça login para aceder ao sistema</p>
+          <p>Faça login para acessar o sistema</p>
         </header>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -67,19 +67,7 @@ function Login({ onEntrar }) {
             <button
               type="button"
               onClick={() => setMostrarSenha(!mostrarSenha)}
-              style={{
-                position: 'absolute',
-                right: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                color: '#687483',
-                padding: '0'
-              }}
+              className="mostrar-senha"
             >
               {mostrarSenha ? <Eye size={18} /> : <EyeOff size={18} />}
             </button>
@@ -88,7 +76,7 @@ function Login({ onEntrar }) {
           {erro && <div className="login-error">{erro}</div>}
 
           <button type="submit" className="login-button" disabled={carregando}>
-            {carregando ? 'A entrar...' : 'Entrar'}
+            {carregando ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
       </div>

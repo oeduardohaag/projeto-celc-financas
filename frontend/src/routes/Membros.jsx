@@ -49,6 +49,18 @@ function Membros() {
     return telefone;
   }
 
+    function formatarCPF(cpf) {
+    if (!cpf) return '';
+
+    const apenasNumeros = String(cpf).replace(/\D/g, '');
+
+    if (apenasNumeros.length === 11) {
+      return apenasNumeros.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+    }
+
+    return telefone;
+  }
+
   // 1. BUSCAR MEMBROS AO CARREGAR A PÁGINA (GET /membros)
   async function carregarMembros() {
     try {
@@ -243,7 +255,7 @@ function Membros() {
                 Array.isArray(membros) && membros.map((membro) => (
                   <tr key={membro.id || membro.membro_id}>
                     <td>{membro.nome}</td>
-                    <td>{membro.cpf}</td>
+                    <td>{formatarCPF(membro.cpf)}</td>
                     <td>{formatarData(membro.data_nascimento)}</td>
                     <td>{membro.estado_civil}</td>
                     <td>{membro.sexo}</td>
