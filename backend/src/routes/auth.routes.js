@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const rateLimit = require('express-rate-limit');
 const authController = require('../controllers/authController');
+const authMiddleware = require('../middlewares/authMiddleware')
 
 const router = Router();
 
@@ -14,9 +15,7 @@ const limiteLogin = rateLimit({
 });
 
 router.post('/login', limiteLogin, authController.login);
-router.post('/logout', (req, res) => {
-  res.clearCookie('token'); // Limpa o cookie do navegador
-  return res.status(200).json({ mensagem: 'Logout efetuado com sucesso' });
-});
+router.get('/me', authMiddleware, authController.me);
+router.post('/logout', authController.logout);
 
 module.exports = router;

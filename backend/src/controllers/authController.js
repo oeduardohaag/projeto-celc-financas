@@ -9,27 +9,27 @@ const authController = {
     // Validação dos dados de entrada
     try {
       if (!login || !senha) {
-        return res.status(400).json({ 
-          status: 'erro', 
-          mensagem: 'Login e senha são obrigatórios.' 
+        return res.status(400).json({
+          status: 'erro',
+          mensagem: 'Login e senha são obrigatórios.'
         });
       }
 
       const usuario = await authModel.buscarLogin(login);
 
       if (!usuario) {
-        return res.status(401).json({ 
-          status: 'erro', 
-          mensagem: 'Credenciais inválidas.' 
+        return res.status(401).json({
+          status: 'erro',
+          mensagem: 'Credenciais inválidas.'
         });
       }
 
-      const senhaValida = await bcrypt.compare(senha, usuario.senha); 
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
       if (!senhaValida) {
-        return res.status(401).json({ 
-          status: 'erro', 
-          mensagem: 'Credenciais inválidas.' 
+        return res.status(401).json({
+          status: 'erro',
+          mensagem: 'Credenciais inválidas.'
         });
       }
 
@@ -45,7 +45,8 @@ const authController = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 8 * 60 * 60 * 1000 
+        path: '/',
+        maxAge: 8 * 60 * 60 * 1000
       });
 
       return res.status(200).json({
@@ -61,9 +62,47 @@ const authController = {
 
     } catch (erro) {
       console.error('Erro no login:', erro);
-      return res.status(500).json({ 
-        status: 'erro', 
-        mensagem: 'Erro interno no servidor.' 
+      return res.status(500).json({
+        status: 'erro',
+        mensagem: 'Erro interno no servidor.'
+      });
+    }
+  },
+
+  async logout(req, res){
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/'
+    });
+
+    return res.status(200).json({
+      status: 'sucesso',
+      mensagem: 'Logout feito.'
+    });
+  },
+
+  async me(req, res) {
+    try {
+      const usuario = await authModel.buscarPorId(req.usuarioId);
+
+      if (!usuario) {
+        return res.status(404).json({
+          status: 'erro',
+          mensagem: 'Utilizador não encontrado.'
+        });
+      }
+
+      return res.status(200).json({
+        status: 'sucesso',
+        dados: usuario
+      });
+    } catch (erro) {
+      console.error('Erro ao buscar dados do utilizador:', erro);
+      return res.status(500).json({
+        status: 'erro',
+        mensagem: 'Erro interno no servidor.'
       });
     }
   }

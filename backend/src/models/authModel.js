@@ -8,6 +8,14 @@ const authModel = {
       [login]
     );
     return resultado.rows[0];
+  },
+
+  async buscarPorId(id) {
+    const resultado = await pool.query(
+      'SELECT id, nome, login FROM public.diretoria WHERE id = $1',
+      [id]
+    );
+    return resultado.rows[0];
   }
 };
 

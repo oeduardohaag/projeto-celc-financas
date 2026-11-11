@@ -26,13 +26,11 @@ function LayoutFinanceiro() {
 
   // Saldos calculados pelo backend (saldo inicial + movimentações pagas)
   const [saldos, setSaldos] = useState({ saldo_banco: 0, saldo_dinheiro: 0 })
-  const [saldoTotal, setSaldoTotal] = useState('')
-  const [saldoTotalDinheiro, setSaldoTotalDinheiro] = useState('')
 
   // Lista de contas/transações vindas da API
   const [contas, setContas] = useState([])
 
-async function carregarSaldos() {
+  async function carregarSaldos() {
     try {
       const { data } = await api.get('/contas/dashboard/saldos')
       if (data && data.resumo) {
@@ -43,38 +41,30 @@ async function carregarSaldos() {
     }
   }
 
-  useEffect(() => {
-    async function carregarDadosFinanceiros() {
-      try {
-        const respostaContas = await api.get('/contas')
-        const dadosContas = Array.isArray(respostaContas.data)
-          ? respostaContas.data
-          : (respostaContas.data.contas || respostaContas.data.dados || [])
-        setContas(dadosContas)
+  async function sairDaConta() {
+    const confirmar = window.confirm(
+      'Deseja realmente sair da sua conta?'
+    )
 
-        await carregarSaldos()
+    if (confirmar) {
+      try {
+        // Chama a rota de logout no backend para limpar o cookie HTTP-only
+        await api.post('/auth/logout')
       } catch (erro) {
-        console.error('Erro ao carregar dados financeiros no layout:', erro)
+        console.error('Erro ao terminar sessão:', erro)
+      } finally {
+        // Redireciona para o login independentemente de erro na API
+        navigate('/login', { replace: true })
       }
     }
-    carregarDadosFinanceiros()
-  }, [])
-  
+  }
+
   // Busca os saldos ao carregar o layout
   useEffect(() => {
     carregarSaldos()
   }, [])
 
   // Retorna à tela de login.
-  function sairDaConta() {
-    const confirmar = window.confirm(
-      'Deseja realmente sair da sua conta?'
-    )
-
-    if (confirmar) {
-      navigate('/login', { replace: true })
-    }
-  }
 
   return (
     <div className="finance-app">
@@ -121,7 +111,7 @@ async function carregarSaldos() {
             <span>Gráficos</span>
           </NavLink>
 
-          <NavLink  style={{marginBottom: '18px'}}
+          <NavLink style={{ marginBottom: '18px' }}
             to="/membros"
             className={({ isActive }) =>
               isActive ? 'finance-link active' : 'finance-link'
