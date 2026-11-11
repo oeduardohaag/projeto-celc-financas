@@ -64,7 +64,7 @@ npm i
 ```bash
 PORT=3000
 
-DATABASE_URL=url_do_supabase 
+DATABASE_URL=url_do_supabase
 
 JWT_SECRET = token_aqui
 ```
