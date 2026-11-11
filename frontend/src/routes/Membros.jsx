@@ -20,7 +20,6 @@ function Membros() {
 
   // Formata a data para ser exibida no padrão brasileiro
   function formatarData(dataIso) {
-    // Retorna um traço se a data for nula, vazia ou indefinida
     if (!dataIso) return '-';
 
     // Garante que é string e divide com segurança
@@ -31,6 +30,23 @@ function Membros() {
 
     const [ano, mes, dia] = partes;
     return `${dia}/${mes}/${ano}`;
+  }
+  
+  function formatarTelefone(telefone) {
+    if (!telefone) return '';
+
+    const apenasNumeros = String(telefone).replace(/\D/g, '');
+
+    // Valida se possui o DDD + número (10 dígitos para fixo ou 11 para celular)
+    if (apenasNumeros.length === 11) {
+      return apenasNumeros.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+    }
+
+    if (apenasNumeros.length === 10) {
+      return apenasNumeros.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+    }
+
+    return telefone;
   }
 
   // 1. BUSCAR MEMBROS AO CARREGAR A PÁGINA (GET /membros)
@@ -231,7 +247,7 @@ function Membros() {
                     <td>{formatarData(membro.data_nascimento)}</td>
                     <td>{membro.estado_civil}</td>
                     <td>{membro.sexo}</td>
-                    <td>{membro.telefone}</td>
+                    <td>{formatarTelefone(membro.telefone)}</td>
                     <td>{membro.filhos}</td>
                     <td className="actions-cell">
                       <button

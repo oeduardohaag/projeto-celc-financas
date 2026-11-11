@@ -1,4 +1,6 @@
-* {font-family: 'Poppins', sans-serif;}
+* {
+  font-family: 'Poppins', sans-serif;
+}
 
 .contas-page {
   width: 100%;
@@ -131,10 +133,11 @@
 }
 
 .contas-filtros label {
-  font-size: 13px;
-  font-weight: 500;
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
   color: #5A5A5A;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .contas-filtros select,

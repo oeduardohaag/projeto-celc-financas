@@ -245,7 +245,7 @@ function Contas() {
 
         <div className="contas-filtros">
           <div>
-            <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Classificação</label>
+            <label>Classificação</label>
             <select value={filtroClassificacao} onChange={(e) => setFiltroClassificacao(e.target.value)}>
               <option value="">Todas</option>
               <option value="Receita">Receita</option>
@@ -254,7 +254,7 @@ function Contas() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Categoria</label>
+            <label>Categoria</label>
             <select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)}>
               <option value="">Todas</option>
               <option value="Dízimo">Dízimo</option>
@@ -269,7 +269,7 @@ function Contas() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Método de Pagamento</label>
+            <label>Método de Pagamento</label>
             <select value={filtroMetodoPgto} onChange={(e) => setFiltroMetodoPgto(e.target.value)}>
               <option value="">Todos</option>
               <option value="Dinheiro">Dinheiro</option>
@@ -281,7 +281,7 @@ function Contas() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Status</label>
+            <label>Status</label>
             <select value={filtroStatusConta} onChange={(e) => setFiltroStatusConta(e.target.value)}>
               <option value="">Todos</option>
               <option value="Pendente">Pendente</option>
@@ -291,7 +291,7 @@ function Contas() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Mês de Vencimento</label>
+            <label>Mês de Vencimento</label>
             <input
               type="month"
               value={filtroMes}
