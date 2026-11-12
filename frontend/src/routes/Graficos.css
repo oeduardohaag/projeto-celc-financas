@@ -1,0 +1,197 @@
+:root {
+  --gold: #d4af37;
+  --gold-light: #f3d97a;
+  --gold-dark: #a8861f;
+  --gold-soft: #fbf4d9;
+  --black: #0b0e12;
+  --ink: #1b232d;
+  --text: #2a2a2a;
+  --muted: #6b7684;
+  --border: #e6e9ef;
+  --surface: #ffffff;
+  --surface-2: #f8f9fb;
+  --danger: #b91c1c;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 3px rgba(15, 23, 42, .05), 0 6px 18px rgba(15, 23, 42, .06);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, .14);
+  --gold-gradient: linear-gradient(135deg, #f3d97a, #d4af37 55%, #a8861f);
+}
+
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+.graficos-page {
+  width: 100%;
+  min-width: 0;
+  padding: 28px;
+  color: var(--text);
+  animation: graficosEntrada .4s ease both;
+}
+
+@keyframes graficosEntrada {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Cabeçalho ===== */
+.graficos-header {
+  margin-bottom: 28px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.graficos-header .page-label {
+  display: inline-block;
+  padding: .25rem .75rem;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: var(--gold-dark);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.graficos-header h1 {
+  margin: 10px 0 4px;
+  color: var(--black);
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.graficos-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+/* ===== Grade de gráficos ===== */
+.charts-section {
+  margin-top: 36px;
+}
+
+.section-heading h2 {
+  color: var(--black);
+  font-size: 1.25rem;
+}
+
+.section-heading p {
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.chart-card {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 380px;
+  padding: 26px 24px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition: box-shadow .25s, transform .25s, border-color .25s;
+}
+
+.chart-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: var(--gold-gradient);
+}
+
+.chart-card:hover {
+  transform: translateY(-3px);
+  border-color: #ecd98a;
+  box-shadow: var(--shadow-lg);
+}
+
+.chart-heading {
+  margin-bottom: 18px;
+}
+
+.chart-heading h2,
+.chart-card h3 {
+  margin: 0 0 4px;
+  color: var(--black);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.chart-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.chart-container {
+  width: 100%;
+  min-width: 0;
+  height: 290px;
+}
+
+/* ===== Detalhes do Recharts ===== */
+.chart-container .recharts-text,
+.chart-container .recharts-legend-item-text {
+  font-size: 12px;
+}
+
+.chart-container .recharts-cartesian-axis-tick-value {
+  fill: var(--muted);
+}
+
+.chart-container .recharts-legend-item-text {
+  color: var(--ink) !important;
+  font-weight: 500;
+}
+
+.chart-container .recharts-default-tooltip {
+  border: 1px solid var(--gold) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--shadow-lg);
+}
+
+/* ===== Aviso de dados demonstrativos ===== */
+.graficos-aviso {
+  margin: 24px 0 0;
+  padding: 14px 18px;
+  border: 1px solid #f0e2a8;
+  border-left: 4px solid var(--gold);
+  border-radius: 10px;
+  background: var(--gold-soft);
+  color: #6b5614;
+  font-size: .85rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .graficos-page {
+    padding: 16px;
+  }
+
+  .graficos-header h1 {
+    font-size: 1.55rem;
+  }
+
+  .chart-card {
+    padding: 22px 14px 14px;
+  }
+}

@@ -1,0 +1,580 @@
+:root {
+  --gold: #d4af37;
+  --gold-light: #f3d97a;
+  --gold-dark: #a8861f;
+  --gold-soft: #fbf4d9;
+  --black: #0b0e12;
+  --ink: #1b232d;
+  --text: #2a2a2a;
+  --muted: #6b7684;
+  --border: #e6e9ef;
+  --surface: #ffffff;
+  --surface-2: #f8f9fb;
+  --danger: #b91c1c;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 3px rgba(15, 23, 42, .05), 0 6px 18px rgba(15, 23, 42, .06);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, .14);
+  --gold-gradient: linear-gradient(135deg, #f3d97a, #d4af37 55%, #a8861f);
+}
+
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+.contas-page {
+  width: 100%;
+  min-width: 0;
+  padding: 28px;
+  color: var(--text);
+  animation: contasEntrada .4s ease both;
+}
+
+@keyframes contasEntrada {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Cabeçalho ===== */
+.contas-header,
+.contas-lista-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.contas-header {
+  margin-bottom: 28px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.contas-header .page-label {
+  display: inline-block;
+  padding: .25rem .75rem;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: var(--gold-dark);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.contas-header h1 {
+  margin: 10px 0 4px;
+  color: var(--black);
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.contas-header p,
+.contas-lista-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+/* ===== Botões principais (dourado) ===== */
+.nova-conta-button,
+.modal-save-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f3d97a, #d4af37 55%, #a8861f);
+  color: #171200;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: .01em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(168, 134, 31, .4);
+  transition: filter .2s, transform .15s, box-shadow .2s;
+}
+
+.nova-conta-button:hover,
+.modal-save-button:hover {
+  filter: brightness(1.07);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(168, 134, 31, .5);
+}
+
+.nova-conta-button:active,
+.modal-save-button:active {
+  transform: scale(.98);
+}
+
+.modal-save-button:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+/* ===== Resumo ===== */
+.contas-resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.conta-resumo-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px 24px 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #fff, var(--surface-2));
+  box-shadow: var(--shadow);
+  transition: transform .25s, box-shadow .25s;
+}
+
+.conta-resumo-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: var(--gold-gradient);
+}
+
+.conta-resumo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.conta-resumo-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--black);
+  color: var(--gold);
+}
+
+.conta-resumo-card span,
+.conta-resumo-card small {
+  display: block;
+  color: var(--muted);
+}
+
+.conta-resumo-card span {
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.conta-resumo-card strong {
+  display: block;
+  margin: 4px 0;
+  color: var(--black);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.conta-resumo-card small {
+  font-size: .82rem;
+}
+
+/* ===== Lista ===== */
+.contas-lista-section {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.contas-lista-header {
+  margin-bottom: 20px;
+}
+
+.contas-lista-header h2 {
+  margin: 0 0 6px;
+  color: var(--black);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* ===== Filtros ===== */
+.contas-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.contas-filtros > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+}
+
+.contas-filtros label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.contas-filtros select,
+.contas-filtros input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1.5px solid #dde2ea;
+  border-radius: 10px;
+  background-color: #fff;
+  color: var(--text);
+  font: inherit;
+  font-size: .9rem;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.contas-filtros select:hover,
+.contas-filtros input:hover {
+  border-color: var(--gold-light);
+}
+
+.contas-filtros select:focus,
+.contas-filtros input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, .2);
+}
+
+/* ===== Tabela ===== */
+.contas-page .accounts-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.contas-page .accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.contas-page .accounts-table th,
+.contas-page .accounts-table td {
+  padding: 15px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.contas-page .accounts-table th {
+  background: linear-gradient(180deg, #151d27, var(--black));
+  color: var(--gold);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--gold-dark);
+}
+
+.contas-page .accounts-table td {
+  color: #44505e;
+  font-size: .92rem;
+}
+
+.contas-page .accounts-table tbody tr {
+  transition: background .15s;
+}
+
+.contas-page .accounts-table tbody tr:nth-child(even) td {
+  background: var(--surface-2);
+}
+
+.contas-page .accounts-table tbody tr:hover td {
+  background: var(--gold-soft);
+}
+
+.contas-page .accounts-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* botões de ação da tabela */
+.contas-page .edit-button,
+.contas-page .delete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 11px;
+  border: 1px solid;
+  border-radius: 9px;
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s;
+}
+
+.contas-page .edit-button {
+  margin-right: 6px;
+  border-color: #dfe3ea;
+  background: #f1f3f6;
+  color: var(--ink);
+}
+
+.contas-page .edit-button:hover {
+  border-color: var(--black);
+  background: var(--black);
+  color: var(--gold-light);
+}
+
+.contas-page .delete-button {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: var(--danger);
+}
+
+.contas-page .delete-button:hover {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: #fff;
+}
+
+.contas-page .actions-cell {
+  white-space: nowrap;
+}
+
+.contas-vazias {
+  padding: 32px !important;
+  color: var(--muted) !important;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ===== Selo de status ===== */
+.contas-page .status-badge {
+  display: inline-block;
+  padding: .28rem .8rem;
+  border-radius: 999px;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  line-height: 1.3;
+  background: #eef0f4;
+  color: #44505e;
+}
+
+.contas-page .status-pendente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.contas-page .status-pago {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.contas-page .status-atrasado {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ===== Modal (bloco igual ao de Membros.css) ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(11, 14, 18, .65);
+  backdrop-filter: blur(4px);
+  animation: modalFundo .2s ease both;
+}
+
+@keyframes modalFundo {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modalJanela {
+  from { opacity: 0; transform: translateY(14px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-close-button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: #f1f3f6;
+  color: #354252;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+
+.modal-close-button:hover {
+  background: var(--black);
+  color: var(--gold-light);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.modal-cancel-button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1.5px solid #dde2ea;
+  border-radius: 10px;
+  background: #fff;
+  color: #354252;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+
+.modal-cancel-button:hover {
+  background: var(--surface-2);
+  border-color: #b7c0cc;
+}
+
+/* janela da conta */
+.conta-modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px;
+  border-top: 4px solid var(--gold);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .35);
+  animation: modalJanela .25s ease both;
+}
+
+.conta-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.conta-modal-header h2 {
+  margin: 0 0 6px;
+  color: var(--black);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.conta-modal-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .88rem;
+}
+
+.account-form {
+  display: grid;
+  gap: 8px;
+}
+
+.account-form label {
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.account-form input,
+.account-form select {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  box-sizing: border-box;
+  border: 1.5px solid #dde2ea;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.account-form input:hover,
+.account-form select:hover {
+  border-color: #cfd6df;
+}
+
+.account-form input:focus,
+.account-form select:focus {
+  background: #fff;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, .2);
+}
+
+/* ===== Responsivo ===== */
+@media (max-width: 600px) {
+  .contas-page {
+    padding: 16px;
+  }
+
+  .contas-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .contas-header h1 {
+    font-size: 1.55rem;
+  }
+
+  .contas-lista-section {
+    padding: 14px;
+  }
+
+  .contas-page .accounts-table th,
+  .contas-page .accounts-table td {
+    padding: 11px 10px;
+    white-space: nowrap;
+  }
+
+  .conta-modal {
+    padding: 20px;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+}
