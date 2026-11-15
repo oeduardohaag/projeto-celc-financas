@@ -12,6 +12,9 @@ const contasSchema = z.object({
   metodo_pgto: z.enum(['PIX', 'Dinheiro', 'Crédito', 'Débito', 'Boleto'], {
     errorMap: () => ({ message: 'Método de Pagamento Inválido' })
   }),
+  origem: z.enum(['Criciúma', 'Araranguá'], {
+    errorMap: () => ({ message: 'A origem deve ser Criciúma ou Araranguá.' })
+  }),
   status_conta: z.enum(['Pendente', 'Pago', 'Atrasado'], {
     errorMap: () => ({ message: "O status deve ser 'Pendente', 'Pago' ou 'Atrasado'" })
   }),

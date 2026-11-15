@@ -10,6 +10,7 @@ const contasModel = {
       valor,
       metodo_pgto,
       status_conta,
+      origem,
       data_vencimento,
       data_pgto,
       membro_id
@@ -17,8 +18,8 @@ const contasModel = {
 
     const query = `
       INSERT INTO contas (
-        nome_conta, classificacao, categoria, valor, metodo_pgto, status_conta, data_vencimento, data_pgto, membro_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        nome_conta, classificacao, categoria, valor, metodo_pgto, status_conta, origem, data_vencimento, data_pgto, membro_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *;
     `;
 
@@ -29,6 +30,7 @@ const contasModel = {
       valor,
       metodo_pgto,
       status_conta || 'Pendente',
+      origem,
       data_vencimento,
       data_pgto || null,
       membro_id || null
@@ -111,6 +113,7 @@ const contasModel = {
       valor,
       metodo_pgto,
       status_conta,
+      origem,
       data_vencimento,
       data_pgto,
       membro_id
@@ -134,10 +137,11 @@ const contasModel = {
           valor = $4, 
           metodo_pgto = $5,
           status_conta = $6, 
-          data_vencimento = $7, 
-          data_pgto = $8, 
-          membro_id = $9
-      WHERE id = $10
+          origem = $7,
+          data_vencimento = $8, 
+          data_pgto = $9, 
+          membro_id = $10
+      WHERE id = $11
       RETURNING *;
     `;
 
@@ -148,6 +152,7 @@ const contasModel = {
       valor,
       metodo_pgto,
       statusFinal,
+      origem,
       data_vencimento,
       dataPgtoFinal,
       membroIdFinal,
