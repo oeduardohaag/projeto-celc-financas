@@ -34,13 +34,13 @@ const dashboardModel = {
     return rows[0];
   },
 
-  async salvarConfiguracoes({ saldo_inicial_banco, saldo_inicial_dinheiro }) {
+  async salvarConfiguracoes({ saldo_inicial_banco, saldo_inicial_dinheiro, meta_arrecadacao }) {
     const { rows } = await pool.query(
       `UPDATE configuracoes
-     SET saldo_inicial_banco = $1, saldo_inicial_dinheiro = $2
+     SET saldo_inicial_banco = $1, saldo_inicial_dinheiro = $2, meta_arrecadacao = $3
      WHERE id = 1
      RETURNING *`,
-      [saldo_inicial_banco, saldo_inicial_dinheiro]
+      [saldo_inicial_banco, saldo_inicial_dinheiro, meta_arrecadacao]
     );
     return rows[0];
   },

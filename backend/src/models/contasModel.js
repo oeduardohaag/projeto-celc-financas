@@ -172,7 +172,7 @@ const contasModel = {
       WHERE id = $3
       RETURNING *;
     `;
-    const { rows } = await pool.query(query, ["status_conta", dataPagamentoFinal, id]);
+    const { rows } = await pool.query(query, [status_conta, dataPagamentoFinal, id]);
     return rows[0];
   },
 

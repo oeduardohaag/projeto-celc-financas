@@ -123,14 +123,16 @@ const contasController = {
     try {
       const saldo_inicial_banco = Number(req.body.saldo_inicial_banco);
       const saldo_inicial_dinheiro = Number(req.body.saldo_inicial_dinheiro);
+      const meta_arrecadacao = Number(req.body.meta_arrecadacao);
 
-      if (Number.isNaN(saldo_inicial_banco) || Number.isNaN(saldo_inicial_dinheiro)) {
-        return res.status(400).json({ status: 'erro', mensagem: 'Valores de saldo inválidos' });
+      if (Number.isNaN(saldo_inicial_banco) || Number.isNaN(saldo_inicial_dinheiro) || Number.isNaN(meta_arrecadacao)) {
+        return res.status(400).json({ status: 'erro', mensagem: 'Valores inválidos' });
       }
 
       const config = await dashboardModel.salvarConfiguracoes({
         saldo_inicial_banco,
         saldo_inicial_dinheiro,
+        meta_arrecadacao
       });
       return res.json({ status: 'sucesso', dados: config });
     } catch (error) {
