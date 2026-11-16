@@ -4,12 +4,10 @@ import api from "../services/api";
 
 import {
   Settings,
-  Building2,
-  Palette,
-  Bell,
   Save,
   RotateCcw,
   Wallet,
+  TrendingUp 
 } from "lucide-react";
 
 import "./Configuracoes.css";
@@ -17,19 +15,12 @@ import "./Configuracoes.css";
 export default function Configuracoes() {
   const { recarregarSaldos } = useOutletContext() || {};
 
-  const [instituicao, setInstituicao] = useState({
-    nome: "CELC",
-    email: "",
-    telefone: ""
-  });
-
   // Saldos iniciais (guardados no banco, na tabela configuracoes)
   const [saldoBancario, setSaldoBancario] = useState("");
   const [saldoDinheiro, setSaldoDinheiro] = useState("");
+  const [metaArrecadacao, setMetaArrecadacao] = useState("");
   const [salvando, setSalvando] = useState(false);
 
-  const [aparencia, setAparencia] = useState("claro");
-  const [notificacoes, setNotificacoes] = useState(true);
   const [mensagem, setMensagem] = useState("");
 
   // Carrega os saldos iniciais do banco ao abrir a tela
@@ -39,6 +30,7 @@ export default function Configuracoes() {
         const { data } = await api.get("contas/configuracoes");
         setSaldoBancario(Number(data.dados.saldo_inicial_banco));
         setSaldoDinheiro(Number(data.dados.saldo_inicial_dinheiro));
+        setMetaArrecadacao(Number(data.dados.meta_arrecadacao));
       } catch (erro) {
         console.error("Erro ao carregar configurações:", erro);
         setMensagem("Não foi possível carregar os saldos iniciais.");
@@ -46,15 +38,6 @@ export default function Configuracoes() {
     }
     carregarConfiguracoes();
   }, []);
-
-  function atualizarInstituicao(event) {
-    const { name, value } = event.target;
-
-    setInstituicao((dadosAtuais) => ({
-      ...dadosAtuais,
-      [name]: value
-    }));
-  }
 
   async function salvarConfiguracoes(event) {
     event.preventDefault();
@@ -65,6 +48,7 @@ export default function Configuracoes() {
       await api.put("contas/configuracoes", {
         saldo_inicial_banco: Number(saldoBancario) || 0,
         saldo_inicial_dinheiro: Number(saldoDinheiro) || 0,
+        meta_arrecadacao: Number(metaArrecadacao) || 0
       });
 
       // Atualiza o cabeçalho com os novos saldos
@@ -149,6 +133,38 @@ export default function Configuracoes() {
 
           </div>
         </section>
+        <section className="configuracoes-card">
+
+          <div className="configuracoes-card-header">
+
+            <div className="configuracoes-card-icone">
+              <TrendingUp  size={22} />
+            </div>
+
+            <div>
+              <h2>Meta de Arrecadação</h2>
+              <p>Defina a meta de arrecadação de igreja para um mês.</p>
+            </div>
+
+          </div>
+
+          <div className="configuracoes-campos">
+
+            <label className="configuracoes-campo">
+              <span>Meta de arrecadação por mês (R$)</span>
+
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={metaArrecadacao}
+                onChange={(event) => setMetaArrecadacao(event.target.value)}
+                placeholder="Ex.: 10000.00"
+              />
+            </label>
+
+          </div>
+        </section>
 
         {mensagem && (
           <div className="configuracoes-mensagem">{mensagem}</div>
@@ -160,15 +176,9 @@ export default function Configuracoes() {
             type="button"
             className="configuracoes-botao secundario"
             onClick={() => {
-              setInstituicao({
-                nome: "CELC",
-                email: "",
-                telefone: ""
-              });
               setSaldoBancario(0);
               setSaldoDinheiro(0);
-              setAparencia("claro");
-              setNotificacoes(true);
+              setMetaArrecadacao(0);
               setMensagem("");
             }}
           >
