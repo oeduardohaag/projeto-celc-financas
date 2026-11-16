@@ -92,6 +92,16 @@ function LayoutFinanceiro() {
           </NavLink>
 
           <NavLink
+            to="/membros"
+            className={({ isActive }) =>
+              isActive ? 'finance-link active' : 'finance-link'
+            }
+          >
+            <Users size={19} />
+            <span>Membros</span>
+          </NavLink>
+
+          <NavLink
             to="/relatorios"
             className={({ isActive }) =>
               isActive ? 'finance-link active' : 'finance-link'
@@ -109,16 +119,6 @@ function LayoutFinanceiro() {
           >
             <ChartNoAxesCombined size={19} />
             <span>Gráficos</span>
-          </NavLink>
-
-          <NavLink
-            to="/membros"
-            className={({ isActive }) =>
-              isActive ? 'finance-link active' : 'finance-link'
-            }
-          >
-            <Users size={19} />
-            <span>Membros</span>
           </NavLink>
 
         </nav>
