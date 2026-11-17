@@ -70,10 +70,11 @@
 
 /* ===== Seções ===== */
 .relatorios-section {
-  margin-bottom: 28px;
+  margin-bottom: 10px;
 }
 
-.relatorios-section > h2 {
+.relatorios-section > h2,
+.relatorios-section-header h2 {
   position: relative;
   margin: 0 0 18px;
   padding-left: 14px;
@@ -82,7 +83,8 @@
   font-weight: 700;
 }
 
-.relatorios-section > h2::before {
+.relatorios-section > h2::before,
+.relatorios-section-header h2::before {
   content: "";
   position: absolute;
   left: 0;
@@ -91,6 +93,19 @@
   width: 4px;
   border-radius: 4px;
   background: var(--gold-gradient);
+}
+
+.relatorios-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.relatorios-section-header h2 {
+  margin-bottom: 0;
 }
 
 /* ===== Filtros ===== */
@@ -111,6 +126,11 @@
   flex: 1;
   flex-direction: column;
   min-width: 200px;
+}
+
+.relatorios-campo-ano {
+  flex: 0 0 140px;
+  min-width: 140px;
 }
 
 .relatorios-campo label {
@@ -195,39 +215,21 @@
   letter-spacing: -.02em;
 }
 
+.relatorios-card h3.valor-positivo {
+  color: #15803d;
+}
+
+.relatorios-card h3.valor-despesa,
+.relatorios-card h3.valor-negativo {
+  color: var(--danger);
+}
+
 .relatorios-card small {
   color: var(--muted);
   font-size: .82rem;
 }
 
-/* ===== Gráfico ===== */
-.relatorios-grafico {
-  width: 100%;
-  height: 360px;
-  min-width: 0;
-  padding: 22px 18px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-
-.relatorios-grafico .recharts-text,
-.relatorios-grafico .recharts-legend-item-text {
-  font-size: 12px;
-}
-
-.relatorios-grafico .recharts-cartesian-axis-tick-value {
-  fill: var(--muted);
-}
-
-.relatorios-grafico .recharts-default-tooltip {
-  border: 1px solid var(--gold) !important;
-  border-radius: 10px !important;
-  box-shadow: var(--shadow-lg);
-}
-
-/* ===== Tabela ===== */
+/* ===== Tabela Matriz de Membros ===== */
 .relatorios-table-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -243,10 +245,13 @@
   text-align: left;
 }
 
-.relatorios-table th,
-.relatorios-table td {
-  padding: 15px 18px;
+.matriz-membros-table th,
+.matriz-membros-table td {
+  padding: 13px 14px;
   border-bottom: 1px solid var(--border);
+  font-size: .85rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .relatorios-table th {
@@ -256,13 +261,11 @@
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
-  white-space: nowrap;
   border-bottom: 2px solid var(--gold-dark);
 }
 
 .relatorios-table td {
   color: #44505e;
-  font-size: .92rem;
 }
 
 .relatorios-table tbody tr {
@@ -281,18 +284,72 @@
   border-bottom: 0;
 }
 
-.relatorios-table td:last-child {
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--black);
-}
-
 .relatorios-table td.relatorios-vazio {
   padding: 32px;
   text-align: center;
   color: var(--muted);
   font-style: italic;
   font-weight: 400;
+}
+
+.matriz-membros-table .col-membro-fixa {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 180px;
+  background: var(--surface);
+  color: var(--black);
+  font-weight: 600;
+  border-right: 1px solid var(--border);
+}
+
+.matriz-membros-table tbody tr:nth-child(even) .col-membro-fixa {
+  background: var(--surface-2);
+}
+
+.matriz-membros-table tbody tr:hover .col-membro-fixa {
+  background: var(--gold-soft);
+}
+
+.matriz-membros-table thead th.col-membro-fixa {
+  z-index: 3;
+  background: linear-gradient(180deg, #151d27, var(--black));
+  color: var(--gold);
+  border-right: 1px solid rgba(212, 175, 55, .25);
+}
+
+.matriz-membros-table .valor-contribuido {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.matriz-membros-table .valor-zerado {
+  color: var(--muted);
+  text-align: left;
+}
+
+.matriz-membros-table tbody .col-total-anual {
+  background: var(--gold-soft);
+  color: var(--black);
+  font-weight: 700;
+  border-left: 1px solid #ecd98a;
+}
+
+.matriz-membros-table tfoot .linha-total-geral td {
+  background: var(--surface-2);
+  color: var(--black);
+  font-weight: 700;
+  border-top: 2px solid var(--gold-dark);
+  border-bottom: 0;
+}
+
+.matriz-membros-table tfoot .col-membro-fixa {
+  background: var(--surface-2);
+}
+
+.matriz-membros-table tfoot .col-total-anual {
+  background: var(--gold-soft);
+  color: var(--gold-dark);
 }
 
 @media (max-width: 600px) {
@@ -304,14 +361,8 @@
     font-size: 1.55rem;
   }
 
-  .relatorios-grafico {
-    height: 300px;
-    padding: 16px 8px 8px;
-  }
-
-  .relatorios-table th,
-  .relatorios-table td {
+  .matriz-membros-table th,
+  .matriz-membros-table td {
     padding: 11px 10px;
-    white-space: nowrap;
   }
 }

@@ -1,30 +1,9 @@
-
-import { useState } from 'react'
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend
-} from 'recharts'
+import { useState, useEffect, useMemo } from 'react'
+import api from '../services/api'
 import './Relatorios.css'
+import { usePaginacao } from '../hooks/usePaginacao'
+import Paginacao from '../components/Paginacao'
 
-// Lançamentos fictícios para testar os relatórios.
-const lancamentosDemonstrativos = [
-  { id: 1, data: '2026-01-10', categoria: 'Dízimos', descricao: 'Contribuições de janeiro', valor: 1200 },
-  { id: 2, data: '2026-01-15', categoria: 'Ofertas', descricao: 'Oferta de janeiro', valor: 650 },
-  { id: 3, data: '2026-02-10', categoria: 'Dízimos', descricao: 'Contribuições de fevereiro', valor: 1450 },
-  { id: 4, data: '2026-02-15', categoria: 'Ofertas', descricao: 'Oferta de fevereiro', valor: 720 },
-  { id: 5, data: '2026-03-10', categoria: 'Dízimos', descricao: 'Contribuições de março', valor: 1320 },
-  { id: 6, data: '2026-03-15', categoria: 'Ofertas', descricao: 'Oferta de março', valor: 810 },
-  { id: 7, data: '2026-10-05', categoria: 'Dízimos', descricao: 'Contribuições de outubro', valor: 1600 },
-  { id: 8, data: '2026-10-08', categoria: 'Ofertas', descricao: 'Oferta de outubro', valor: 900 }
-]
-
-// Meses disponíveis no filtro e no gráfico.
 const meses = [
   { valor: '01', nome: 'Jan' },
   { valor: '02', nome: 'Fev' },
@@ -41,11 +20,49 @@ const meses = [
 ]
 
 function Relatorios() {
-  // Controla os filtros selecionados.
-  const [mesSelecionado, setMesSelecionado] = useState('todos')
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState('todas')
+  const [contas, setContas] = useState([])
+  const [membros, setMembros] = useState([])
+  const [carregando, setCarregando] = useState(false)
 
-  // Exibe valores no formato monetário brasileiro.
+  // Filtros gerais
+  const [mesSelecionado, setMesSelecionado] = useState('todos')
+  const [classificacaoSelecionada, setClassificacaoSelecionada] = useState('todas')
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState('todas')
+  const [origemSelecionada, setOrigemSelecionada] = useState('todas')
+
+  // Filtro de ano da tabela de membros
+  const anoAtual = String(new Date().getFullYear())
+  const [anoMatriz, setAnoMatriz] = useState(anoAtual)
+
+  async function carregarDadosRelatorio() {
+    setCarregando(true)
+    try {
+      const [respostaContas, respostaMembros] = await Promise.all([
+        api.get('/contas'),
+        api.get('/membros')
+      ])
+
+      const dadosContas = Array.isArray(respostaContas.data)
+        ? respostaContas.data
+        : (respostaContas.data.contas || respostaContas.data.dados || [])
+
+      const dadosMembros = Array.isArray(respostaMembros.data)
+        ? respostaMembros.data
+        : (respostaMembros.data.membros || respostaMembros.data.dados || [])
+
+      setContas(dadosContas)
+      setMembros(dadosMembros)
+    } catch (erro) {
+      console.error('Erro ao carregar dados para relatórios:', erro)
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  useEffect(() => {
+    carregarDadosRelatorio()
+  }, [])
+
   function formatarReais(valor) {
     return Number(valor).toLocaleString('pt-BR', {
       style: 'currency',
@@ -53,66 +70,154 @@ function Relatorios() {
     })
   }
 
-  // Converte uma data ISO para o formato brasileiro.
-  function formatarData(dataISO) {
-    const [ano, mes, dia] = dataISO.split('-')
-    return `${dia}/${mes}/${ano}`
+  function limparFiltros() {
+    setMesSelecionado('todos')
+    setClassificacaoSelecionada('todas')
+    setCategoriaSelecionada('todas')
+    setOrigemSelecionada('todas')
   }
 
-  // Aplica os filtros de mês e categoria.
-  const lancamentosFiltrados = lancamentosDemonstrativos.filter(
-    (lancamento) => {
-      const mesCorresponde =
-        mesSelecionado === 'todos' ||
-        lancamento.data.slice(5, 7) === mesSelecionado
-
-      const categoriaCorresponde =
-        categoriaSelecionada === 'todas' ||
-        lancamento.categoria === categoriaSelecionada
-
-      return mesCorresponde && categoriaCorresponde
-    }
+  const categoriasDisponiveis = useMemo(
+    () => [...new Set(contas.map((c) => c.categoria).filter(Boolean))],
+    [contas]
   )
 
-  // Calcula os totais conforme os filtros escolhidos.
-  const totalDizimos = lancamentosFiltrados
-    .filter((item) => item.categoria === 'Dízimos')
-    .reduce((total, item) => total + item.valor, 0)
+  const anosDisponiveis = useMemo(() => {
+    const anos = new Set([anoAtual])
+    contas.forEach((c) => {
+      const dataRef = c.data_pgto || c.data_vencimento
+      if (dataRef) {
+        const ano = String(dataRef).split('T')[0].split('-')[0]
+        if (ano) anos.add(ano)
+      }
+    })
+    return [...anos].sort((a, b) => b.localeCompare(a))
+  }, [contas, anoAtual])
 
-  const totalOfertas = lancamentosFiltrados
-    .filter((item) => item.categoria === 'Ofertas')
-    .reduce((total, item) => total + item.valor, 0)
+  const contasFiltradas = contas.filter((conta) => {
+    const dataRef = conta.data_vencimento || conta.data_pgto || ''
+    const mesConta = dataRef ? String(dataRef).split('T')[0].split('-')[1] : ''
 
-  const totalEntradas = totalDizimos + totalOfertas
+    const matchMes = mesSelecionado === 'todos' || mesConta === mesSelecionado
+    const matchClassificacao =
+      classificacaoSelecionada === 'todas' || conta.classificacao === classificacaoSelecionada
+    const matchCategoria =
+      categoriaSelecionada === 'todas' || conta.categoria === categoriaSelecionada
+    const matchOrigem =
+      origemSelecionada === 'todas' || conta.origem === origemSelecionada
 
-  // Prepara os dados mensais para o gráfico.
-  const dadosGrafico = meses.map((mes) => {
-    const lancamentosDoMes = lancamentosFiltrados.filter(
-      (item) => item.data.slice(5, 7) === mes.valor
+    return matchMes && matchClassificacao && matchCategoria && matchOrigem
+  })
+
+  const totalReceitas = contasFiltradas
+    .filter((item) => item.classificacao === 'Receita')
+    .reduce((total, item) => total + (Number(item.valor) || 0), 0)
+
+  const totalDespesas = contasFiltradas
+    .filter((item) => item.classificacao === 'Despesa')
+    .reduce((total, item) => total + (Number(item.valor) || 0), 0)
+
+  const saldoLiquido = totalReceitas - totalDespesas
+
+  // Matriz: Dízimos por Membro ao longo dos 12 meses
+  const { linhasMembros, totaisPorMes, totalGeralMembros } = useMemo(() => {
+    const ehDizimo = (categoria) => {
+      const normalizada = String(categoria || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+      return normalizada === 'dizimo'
+    }
+
+    const contribuicoesAno = contas.filter((item) => {
+      if (item.classificacao !== 'Receita' || !item.membro_id) return false
+      if (!ehDizimo(item.categoria)) return false
+      if (origemSelecionada !== 'todas' && item.origem !== origemSelecionada) return false
+
+      const dataRef = item.data_pgto || item.data_vencimento
+      if (!dataRef) return false
+      const [ano] = String(dataRef).split('T')[0].split('-')
+      return ano === anoMatriz
+    })
+
+    const mapaMembros = new Map()
+
+    membros.forEach((m) => {
+      const id = Number(m.id || m.membro_id)
+      mapaMembros.set(id, {
+        id,
+        nome: m.nome,
+        meses: Object.fromEntries(meses.map((mes) => [mes.valor, 0])),
+        totalAno: 0
+      })
+    })
+
+    contribuicoesAno.forEach((item) => {
+      const id = Number(item.membro_id)
+      const dataRef = String(item.data_pgto || item.data_vencimento).split('T')[0]
+      const mes = dataRef.split('-')[1]
+      const valor = Number(item.valor) || 0
+
+      if (!mapaMembros.has(id)) {
+        mapaMembros.set(id, {
+          id,
+          nome: item.nome_membro || item.membro_nome || `Membro #${id}`,
+          meses: Object.fromEntries(meses.map((m) => [m.valor, 0])),
+          totalAno: 0
+        })
+      }
+
+      const registro = mapaMembros.get(id)
+      if (registro.meses[mes] !== undefined) {
+        registro.meses[mes] += valor
+        registro.totalAno += valor
+      }
+    })
+
+    const linhas = Array.from(mapaMembros.values()).sort((a, b) =>
+      a.nome.localeCompare(b.nome, 'pt-BR')
     )
 
+    const totaisMes = Object.fromEntries(meses.map((m) => [m.valor, 0]))
+    let totalGeral = 0
+
+    linhas.forEach((linha) => {
+      meses.forEach((m) => {
+        totaisMes[m.valor] += linha.meses[m.valor]
+      })
+      totalGeral += linha.totalAno
+    })
+
     return {
-      mes: mes.nome,
-      dizimos: lancamentosDoMes
-        .filter((item) => item.categoria === 'Dízimos')
-        .reduce((total, item) => total + item.valor, 0),
-      ofertas: lancamentosDoMes
-        .filter((item) => item.categoria === 'Ofertas')
-        .reduce((total, item) => total + item.valor, 0)
+      linhasMembros: linhas,
+      totaisPorMes: totaisMes,
+      totalGeralMembros: totalGeral
     }
-  })
+  }, [contas, membros, anoMatriz, categoriaSelecionada, origemSelecionada])
+
+  const {
+    paginaAtual,
+    setPaginaAtual,
+    totalPaginas,
+    totalItens,
+    itensPaginados: membrosPaginados,
+  } = usePaginacao(linhasMembros, 10)
+
+  useEffect(() => {
+    setPaginaAtual(1)
+  }, [anoMatriz, origemSelecionada, setPaginaAtual])
 
   return (
     <main className="relatorios-page">
       <header className="relatorios-header">
         <span className="page-label">GESTÃO FINANCEIRA</span>
         <h1>Relatórios</h1>
-        <p>Consulte os totais e as movimentações financeiras.</p>
+        <p>Consulte os totais e as contribuições dos membros da CELC.</p>
       </header>
 
-      {/* Filtros do relatório */}
       <section className="relatorios-section">
-        <h2>Filtros</h2>
+        <h2>Resumo financeiro</h2>
 
         <div className="relatorios-filtros">
           <div className="relatorios-campo">
@@ -132,103 +237,176 @@ function Relatorios() {
           </div>
 
           <div className="relatorios-campo">
+            <label htmlFor="filtro-classificacao">Classificação</label>
+            <select
+              id="filtro-classificacao"
+              value={classificacaoSelecionada}
+              onChange={(evento) => setClassificacaoSelecionada(evento.target.value)}
+            >
+              <option value="todas">Todas</option>
+              <option value="Receita">Receita</option>
+              <option value="Despesa">Despesa</option>
+            </select>
+          </div>
+
+          <div className="relatorios-campo">
             <label htmlFor="filtro-categoria">Categoria</label>
             <select
               id="filtro-categoria"
               value={categoriaSelecionada}
-              onChange={(evento) =>
-                setCategoriaSelecionada(evento.target.value)
-              }
+              onChange={(evento) => setCategoriaSelecionada(evento.target.value)}
             >
               <option value="todas">Todas as categorias</option>
-              <option value="Dízimos">Dízimos</option>
-              <option value="Ofertas">Ofertas</option>
+              {categoriasDisponiveis.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
             </select>
           </div>
+
+          <div className="relatorios-campo">
+            <label htmlFor="filtro-origem">Origem</label>
+            <select
+              id="filtro-origem"
+              value={origemSelecionada}
+              onChange={(evento) => setOrigemSelecionada(evento.target.value)}
+            >
+              <option value="todas">Todas as origens</option>
+              <option value="Criciúma">Criciúma</option>
+              <option value="Araranguá">Araranguá</option>
+            </select>
+          </div>
+
+          <button
+            type="button"
+            className="limpar-filtros-button"
+            onClick={limparFiltros}
+          >
+            Limpar
+          </button>
+
         </div>
       </section>
 
-      {/* Indicadores atualizados pelos filtros */}
       <section className="relatorios-section">
-        <h2>Resumo financeiro</h2>
 
         <div className="relatorios-resumo">
           <article className="relatorios-card">
-            <p>Total de entradas</p>
-            <h3>{formatarReais(totalEntradas)}</h3>
-            <small>Dízimos e ofertas</small>
+            <p>Total de receitas</p>
+            <h3 className="valor-positivo">{formatarReais(totalReceitas)}</h3>
+            <small>Entradas filtradas</small>
           </article>
 
           <article className="relatorios-card">
-            <p>Total de dízimos</p>
-            <h3>{formatarReais(totalDizimos)}</h3>
-            <small>Contribuições demonstrativas</small>
+            <p>Total de despesas</p>
+            <h3 className="valor-despesa">{formatarReais(totalDespesas)}</h3>
+            <small>Saídas filtradas</small>
           </article>
 
           <article className="relatorios-card">
-            <p>Total de ofertas</p>
-            <h3>{formatarReais(totalOfertas)}</h3>
-            <small>Ofertas demonstrativas</small>
+            <p>Saldo líquido</p>
+            <h3 className={saldoLiquido >= 0 ? 'valor-positivo' : 'valor-negativo'}>
+              {formatarReais(saldoLiquido)}
+            </h3>
+            <small>Receitas menos despesas</small>
           </article>
         </div>
       </section>
 
-      {/* Gráfico de entradas por mês */}
       <section className="relatorios-section">
-        <h2>Entradas por mês</h2>
+        <div className="relatorios-section-header">
+          <h2>Dízimos por membro ({anoMatriz})</h2>
 
-        <div className="relatorios-grafico">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={dadosGrafico}
-              margin={{ top: 15, right: 15, left: 10, bottom: 5 }}
+          <div className="relatorios-campo relatorios-campo-ano">
+            <label htmlFor="filtro-ano-matriz">Ano</label>
+            <select
+              id="filtro-ano-matriz"
+              value={anoMatriz}
+              onChange={(evento) => setAnoMatriz(evento.target.value)}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e9ef" />
-              <XAxis dataKey="mes" />
-              <YAxis width={80} tickFormatter={(valor) => `R$ ${valor}`} />
-              <Tooltip formatter={(valor) => formatarReais(valor)} />
-              <Legend />
-              <Bar dataKey="dizimos" name="Dízimos" fill="#D4AF37" radius={[5, 5, 0, 0]} />
-              <Bar dataKey="ofertas" name="Ofertas" fill="#263746" radius={[5, 5, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+              {anosDisponiveis.map((ano) => (
+                <option key={ano} value={ano}>
+                  {ano}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </section>
-
-      {/* Tabela correspondente aos filtros */}
-      <section className="relatorios-section">
-        <h2>Lançamentos do relatório</h2>
 
         <div className="relatorios-table-wrapper">
-          <table className="relatorios-table">
+          <table className="relatorios-table matriz-membros-table">
             <thead>
               <tr>
-                <th>Data</th>
-                <th>Categoria</th>
-                <th>Descrição</th>
-                <th>Valor</th>
+                <th className="col-membro-fixa">Membro</th>
+                {meses.map((mes) => (
+                  <th key={mes.valor}>{mes.nome}</th>
+                ))}
+                <th className="col-total-anual">Total</th>
               </tr>
             </thead>
 
             <tbody>
-              {lancamentosFiltrados.map((item) => (
-                <tr key={item.id}>
-                  <td>{formatarData(item.data)}</td>
-                  <td>{item.categoria}</td>
-                  <td>{item.descricao}</td>
-                  <td>{formatarReais(item.valor)}</td>
-                </tr>
-              ))}
-
-              {lancamentosFiltrados.length === 0 && (
+              {carregando ? (
                 <tr>
-                  <td colSpan="4" className="relatorios-vazio">
-                    Nenhum lançamento encontrado para esses filtros.
+                  <td colSpan="14" className="relatorios-vazio">
+                    Carregando contribuições dos membros...
                   </td>
                 </tr>
+              ) : membrosPaginados.length === 0 ? (
+                <tr>
+                  <td colSpan="14" className="relatorios-vazio">
+                    Nenhum membro cadastrado.
+                  </td>
+                </tr>
+              ) : (
+                membrosPaginados.map((membro) => (
+                  <tr key={membro.id}>
+                    <td className="col-membro-fixa">{membro.nome}</td>
+                    {meses.map((mes) => {
+                      const valorMes = membro.meses[mes.valor]
+                      return (
+                        <td
+                          key={mes.valor}
+                          className={valorMes > 0 ? 'valor-contribuido' : 'valor-zerado'}
+                        >
+                          {valorMes > 0 ? formatarReais(valorMes) : '-'}
+                        </td>
+                      )
+                    })}
+                    <td className="col-total-anual">
+                      {formatarReais(membro.totalAno)}
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
+
+            {!carregando && linhasMembros.length > 0 && (
+              <tfoot>
+                <tr className="linha-total-geral">
+                  <td className="col-membro-fixa">Total Mensal</td>
+                  {meses.map((mes) => (
+                    <td key={mes.valor}>
+                      {totaisPorMes[mes.valor] > 0
+                        ? formatarReais(totaisPorMes[mes.valor])
+                        : '-'}
+                    </td>
+                  ))}
+                  <td className="col-total-anual">
+                    {formatarReais(totalGeralMembros)}
+                  </td>
+                </tr>
+              </tfoot>
+            )}
           </table>
+
+          <Paginacao
+            paginaAtual={paginaAtual}
+            totalPaginas={totalPaginas}
+            totalItens={totalItens}
+            onMudarPagina={setPaginaAtual}
+          />
         </div>
       </section>
     </main>
