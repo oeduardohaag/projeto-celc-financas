@@ -11,6 +11,7 @@
   --surface: #ffffff;
   --surface-2: #f8f9fb;
   --danger: #b91c1c;
+  --payment: #00A86B;
   --radius: 16px;
   --radius-sm: 10px;
   --shadow: 0 1px 3px rgba(15, 23, 42, .05), 0 6px 18px rgba(15, 23, 42, .06);
@@ -31,8 +32,15 @@
 }
 
 @keyframes contasEntrada {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ===== Cabeçalho ===== */
@@ -220,7 +228,7 @@
   background: var(--surface-2);
 }
 
-.contas-filtros > div {
+.contas-filtros>div {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -261,6 +269,26 @@
 .contas-filtros input:focus {
   border-color: var(--gold);
   box-shadow: 0 0 0 4px rgba(212, 175, 55, .2);
+}
+
+.limpar-filtros-button {
+  height: 44px;
+  padding: 0 18px;
+  border: 1.5px solid #dde2ea;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+}
+
+.limpar-filtros-button:hover {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  color: var(--gold-dark);
 }
 
 /* ===== Tabela ===== */
@@ -317,14 +345,14 @@
 
 /* botões de ação da tabela */
 .contas-page .edit-button,
-.contas-page .delete-button {
+.contas-page .delete-button,
+.contas-page .pagar-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
   min-width: 36px;
   height: 36px;
-  padding: 0 11px;
   border: 1px solid;
   border-radius: 9px;
   font: inherit;
@@ -348,6 +376,7 @@
 }
 
 .contas-page .delete-button {
+  margin-right: 6px;
   border-color: #fecaca;
   background: #fef2f2;
   color: var(--danger);
@@ -356,6 +385,18 @@
 .contas-page .delete-button:hover {
   border-color: var(--danger);
   background: var(--danger);
+  color: #fff;
+}
+
+.contas-page .pagar-button {
+  border-color: #00d184;
+  background: #f2fef2;
+  color: var(--payment);
+}
+
+.contas-page .pagar-button:hover {
+  border-color: var(--payment);
+  background: var(--payment);
   color: #fff;
 }
 
@@ -413,13 +454,25 @@
 }
 
 @keyframes modalFundo {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalJanela {
-  from { opacity: 0; transform: translateY(14px) scale(.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-close-button {
@@ -575,6 +628,10 @@
   }
 
   .modal-actions button {
+    width: 100%;
+  }
+
+  .limpar-filtros-button {
     width: 100%;
   }
 }

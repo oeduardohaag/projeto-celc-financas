@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { Plus, Trash2, Edit3, Wallet, X } from 'lucide-react'
+import { Plus, Trash2, Edit3, CreditCardCheck, Wallet, X } from 'lucide-react'
 import api from '../services/api'
 import './Contas.css'
+import { usePaginacao } from '../hooks/usePaginacao'
+import Paginacao from '../components/Paginacao'
 
 function Contas() {
   const { saldos, recarregarSaldos } = useOutletContext()
 
-  // Saldo total = saldo bancário + saldo em dinheiro (calculados pelo backend)
+  // Saldo total = saldo bancário + saldo em dinheiro
   const saldoTotal = (Number(saldos?.saldo_banco) || 0) + (Number(saldos?.saldo_dinheiro) || 0)
 
   const [contas, setContas] = useState([])
@@ -22,16 +24,18 @@ function Contas() {
   const [categoria, setCategoria] = useState('Dízimo')
   const [valor, setValor] = useState('')
   const [metodoPgto, setMetodoPgto] = useState('')
+  const [origem, setOrigem] = useState('')
   const [statusConta, setStatusConta] = useState('Pendente')
   const [dataVencimento, setDataVencimento] = useState('')
   const [dataPgto, setDataPgto] = useState('')
   const [membroId, setMembroId] = useState('')
 
-  // Filtros de pesquiso
+  // Filtros de pesquisa
   const [filtroClassificacao, setFiltroClassificacao] = useState('')
   const [filtroCategoria, setFiltroCategoria] = useState('')
   const [filtroMetodoPgto, setFiltroMetodoPgto] = useState('')
   const [filtroStatusConta, setFiltroStatusConta] = useState('')
+  const [filtroOrigem, setFiltroOrigem] = useState('')
   const [filtroMes, setFiltroMes] = useState('')
 
   // Formata a data para ser exibida no padrão brasileiro
@@ -77,7 +81,7 @@ function Contas() {
       setContas(dadosContas)
       setMembros(dadosMembros)
     } catch (erro) {
-      console.error('Erro ao carregar dados:', erro)
+      console.error('Erro ao carregar os dados:', erro)
     } finally {
       setCarregando(false)
     }
@@ -96,6 +100,7 @@ function Contas() {
     setValor('')
     setMetodoPgto('')
     setStatusConta('Pendente')
+    setOrigem('')
     setDataVencimento('')
     setDataPgto('')
     setMembroId('')
@@ -111,6 +116,7 @@ function Contas() {
     setValor(conta.valor || '')
     setMetodoPgto(conta.metodo_pgto || '')
     setStatusConta(conta.status_conta || 'Pendente')
+    setOrigem(conta.origem || '')
     setDataVencimento(conta.data_vencimento ? conta.data_vencimento.split('T')[0] : '')
     setDataPgto(conta.data_pgto ? conta.data_pgto.split('T')[0] : '')
     setMembroId(conta.membro_id || '')
@@ -127,7 +133,7 @@ function Contas() {
     }
 
     if (!metodoPgto) {
-      alert('Selecione o método de pagamento.')
+      alert('Selecione a forma de pagamento.')
       return
     }
 
@@ -144,6 +150,7 @@ function Contas() {
       valor: valorNumerico,
       metodo_pgto: metodoPgto,
       status_conta: statusConta,
+      origem,
       data_vencimento: dataVencimento,
       data_pgto: statusConta === 'Pendente' ? null : (dataPgto ? dataPgto : null),
       membro_id: membroId ? Number(membroId) : null,
@@ -185,10 +192,39 @@ function Contas() {
     }
   }
 
+  async function pagarConta(id) {
+    const confirmar = window.confirm('Deseja realmente marcar esta conta como paga?')
+
+    if (confirmar) {
+      try {
+        await api.patch(`/contas/${id}/status`, {
+          status_conta: 'Pago',
+          data_pgto: new Date().toISOString().split('T')[0]
+        })
+        alert('Conta paga com sucesso!')
+        carregarDadosIniciais()
+        if (recarregarSaldos) recarregarSaldos()
+      } catch (erro) {
+        console.error('Erro ao pagar conta:', erro)
+        alert('Erro ao tentar pagar a conta.')
+      }
+    }
+  }
+
+  function limparFiltros() {
+    setFiltroClassificacao('')
+    setFiltroCategoria('')
+    setFiltroMetodoPgto('')
+    setFiltroStatusConta('')
+    setFiltroOrigem('')
+    setFiltroMes('')
+  }
+
   const contasFiltradas = Array.isArray(contas) ? contas.filter((conta) => {
     const matchClassificacao = filtroClassificacao ? conta.classificacao === filtroClassificacao : true
     const matchCategoria = filtroCategoria ? conta.categoria === filtroCategoria : true
     const matchMetodoPgto = filtroMetodoPgto ? conta.metodo_pgto === filtroMetodoPgto : true
+    const matchOrigem = filtroOrigem ? conta.origem === filtroOrigem : true
     const matchStatusConta = filtroStatusConta ? conta.status_conta === filtroStatusConta : true
 
     let matchMes = true
@@ -199,8 +235,28 @@ function Contas() {
       matchMes = false
     }
 
-    return matchClassificacao && matchCategoria && matchMetodoPgto && matchStatusConta && matchMes
+    return matchClassificacao && matchCategoria && matchMetodoPgto && matchStatusConta && matchOrigem && matchMes
   }) : []
+
+  const {
+    paginaAtual,
+    setPaginaAtual,
+    totalPaginas,
+    totalItens,
+    itensPaginados: contasPaginadas,
+  } = usePaginacao(contasFiltradas, 10)
+
+  useEffect(() => {
+    setPaginaAtual(1)
+  }, [
+    filtroClassificacao,
+    filtroCategoria,
+    filtroMetodoPgto,
+    filtroStatusConta,
+    filtroOrigem,
+    filtroMes,
+    setPaginaAtual,
+  ])
 
   return (
     <main className="contas-page">
@@ -208,7 +264,7 @@ function Contas() {
         <div>
           <span className="page-label">GESTÃO FINANCEIRA</span>
           <h1>Contas</h1>
-          <p>Gerencie as contas financeiras da instituição.</p>
+          <p>Gerencie as contas financeiras da CELC.</p>
         </div>
 
         <button
@@ -245,7 +301,7 @@ function Contas() {
 
         <div className="contas-filtros">
           <div>
-            <label>Classificação</label>
+            <label>Tipo</label>
             <select value={filtroClassificacao} onChange={(e) => setFiltroClassificacao(e.target.value)}>
               <option value="">Todas</option>
               <option value="Receita">Receita</option>
@@ -269,7 +325,7 @@ function Contas() {
           </div>
 
           <div>
-            <label>Método de Pagamento</label>
+            <label>Forma de Pagamento</label>
             <select value={filtroMetodoPgto} onChange={(e) => setFiltroMetodoPgto(e.target.value)}>
               <option value="">Todos</option>
               <option value="Dinheiro">Dinheiro</option>
@@ -291,6 +347,15 @@ function Contas() {
           </div>
 
           <div>
+            <label>Origem</label>
+            <select value={filtroOrigem} onChange={(e) => setFiltroOrigem(e.target.value)}>
+              <option value="">Todos</option>
+              <option value="Criciúma">Criciúma</option>
+              <option value="Araranguá">Araranguá</option>
+            </select>
+          </div>
+
+          <div>
             <label>Mês de Vencimento</label>
             <input
               type="month"
@@ -298,6 +363,14 @@ function Contas() {
               onChange={(e) => setFiltroMes(e.target.value)}
             />
           </div>
+
+          <button
+            type="button"
+            className="limpar-filtros-button"
+            onClick={limparFiltros}
+          >
+            Limpar
+          </button>
         </div>
 
         <div className="accounts-table-wrapper">
@@ -305,14 +378,15 @@ function Contas() {
             <thead>
               <tr>
                 <th>Nome</th>
-                <th>Classificação</th>
+                <th>Tipo</th>
                 <th>Categoria</th>
                 <th>Valor</th>
-                <th>Método de Pagamento</th>
+                <th>Forma</th>
                 <th>Status</th>
+                <th>Membro</th>
+                <th>Origem</th>
                 <th>Vencimento</th>
                 <th>Pagamento</th>
-                <th>Membro</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -320,10 +394,10 @@ function Contas() {
             <tbody>
               {carregando ? (
                 <tr>
-                  <td colSpan="10" className="contas-vazias">A carregar contas...</td>
+                  <td colSpan="11" className="contas-vazias">Carregando as contas...</td>
                 </tr>
               ) : (
-                Array.isArray(contasFiltradas) && contasFiltradas.map((conta) => (
+                contasPaginadas.map((conta) => (
                   <tr key={conta.id || conta.conta_id}>
                     <td>{conta.nome_conta}</td>
                     <td>{conta.classificacao}</td>
@@ -335,9 +409,10 @@ function Contas() {
                         {conta.status_conta}
                       </span>
                     </td>
+                    <td>{conta.nome_membro || conta.membro_nome || '-'}</td>
+                    <td>{conta.origem}</td>
                     <td>{formatarData(conta.data_vencimento)}</td>
                     <td>{formatarData(conta.data_pgto)}</td>
-                    <td>{conta.nome_membro || conta.membro_nome || '-'}</td>
                     <td className="actions-cell">
                       <button
                         type="button"
@@ -357,22 +432,40 @@ function Contas() {
                       >
                         <Trash2 size={16} />
                       </button>
+                      <button
+                        type="button"
+                        className="pagar-button"
+                        onClick={() => pagarConta(conta.id || conta.conta_id)}
+                        aria-label={`Pagar Conta ${conta.nome_conta}`}
+                        title="Pagar conta"
+                      >
+                        <CreditCardCheck size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))
               )}
 
-              {!carregando && (!Array.isArray(contas) || contas.length === 0) && (
+              {!carregando && contasFiltradas.length === 0 && (
                 <tr>
-                  <td colSpan="10" className="contas-vazias">
-                    Nenhuma conta cadastrada.
+                  <td colSpan="11" className="contas-vazias">
+                    {contas.length === 0
+                      ? 'Nenhuma conta cadastrada.'
+                      : 'Nenhuma conta encontrada com os filtros aplicados.'}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+
+          <Paginacao
+            paginaAtual={paginaAtual}
+            totalPaginas={totalPaginas}
+            totalItens={totalItens}
+            onMudarPagina={setPaginaAtual}
+          />
         </div>
-      </section>
+      </section >
 
       {modalAberto && (
         <div
@@ -394,7 +487,7 @@ function Contas() {
                 <h2 id="modal-titulo">
                   {contaEmEdicao ? 'Atualizar conta' : 'Nova conta'}
                 </h2>
-                <p>Preencha os campos conforme as regras do sistema.</p>
+                <p>Preencha os campos conforme as exigencias.</p>
               </div>
 
               <button
@@ -419,7 +512,7 @@ function Contas() {
                 required
               />
 
-              <label htmlFor="classificacao-conta">Classificação</label>
+              <label htmlFor="classificacao-conta">Tipo</label>
               <select
                 id="classificacao-conta"
                 value={classificacao}
@@ -457,7 +550,7 @@ function Contas() {
                 required
               />
 
-              <label htmlFor="metodo-conta">Método de Pagamento</label>
+              <label htmlFor="metodo-conta">Forma de Pagamento</label>
               <select
                 id="metodo-conta"
                 value={metodoPgto}
@@ -481,6 +574,17 @@ function Contas() {
                 <option value="Pendente">Pendente</option>
                 <option value="Pago">Pago</option>
                 <option value="Atrasado">Atrasado</option>
+              </select>
+
+              <label htmlFor="origem-conta">Origem</label>
+              <select
+                id="origem"
+                value={origem}
+                onChange={(e) => setOrigem(e.target.value)}
+              >
+                <option value="">Selecione a origem</option>
+                <option value="Criciúma">Criciúma</option>
+                <option value="Araranguá">Araranguá</option>
               </select>
 
               <label htmlFor="vencimento-conta">Data de Vencimento</label>
@@ -530,8 +634,9 @@ function Contas() {
             </form>
           </section>
         </div>
-      )}
-    </main>
+      )
+      }
+    </main >
   )
 }
 
