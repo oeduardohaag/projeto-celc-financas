@@ -1,26 +1,50 @@
 {
-    "services": {
-        "backend": {
-            "root": "backend",
-            "framework": "express"
-        },
-        "frontend": {
-            "root": "frontend",
-            "framework": "vite"
-        }
+  "services": {
+    "backend": {
+      "root": "backend",
+      "framework": "express"
     },
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": {
-                "service": "backend"
-            }
-        },
-        {
-            "source": "/(.*)",
-            "destination": {
-                "service": "frontend"
-            }
-        }
-    ]
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/auth/(.*)",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/membros/(.*)",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/membros",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/contas/(.*)",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/contas",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "frontend"
+      }
+    }
+  ]
 }
