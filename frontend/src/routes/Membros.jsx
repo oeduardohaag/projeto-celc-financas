@@ -1,13 +1,22 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Plus, Trash2, Edit3, Users, X, Cake } from 'lucide-react'
 import api from '../services/api'
 import './Membros.css'
+import { usePaginacao } from '../hooks/usePaginacao'
+import Paginacao from '../components/Paginacao'
 
 function Membros() {
   const [membros, setMembros] = useState([])
   const [modalAberto, setModalAberto] = useState(false)
   const [membroEmEdicao, setMembroEmEdicao] = useState(null)
   const [carregando, setCarregando] = useState(false)
+
+  // Estados dos filtros
+  const [filtroNome, setFiltroNome] = useState('')
+  const [filtroIdadeMin, setFiltroIdadeMin] = useState('')
+  const [filtroIdadeMax, setFiltroIdadeMax] = useState('')
+  const [filtroEstadoCivil, setFiltroEstadoCivil] = useState('todos')
+  const [filtroSexo, setFiltroSexo] = useState('todos')
 
   // Campos do formulário (conforme o membroSchema.js)
   const [nome, setNome] = useState('')
@@ -18,47 +27,63 @@ function Membros() {
   const [telefone, setTelefone] = useState('')
   const [filhos, setFilhos] = useState(0)
 
+  // Calcula a idade atual a partir da data de nascimento ISO (YYYY-MM-DD)
+  function calcularIdade(dataIso) {
+    if (!dataIso) return null
+    const dataPura = String(dataIso).split('T')[0]
+    const [ano, mes, dia] = dataPura.split('-').map(Number)
+    if (!ano || !mes || !dia) return null
+
+    const hoje = new Date()
+    let idade = hoje.getFullYear() - ano
+    const mesAtual = hoje.getMonth() + 1
+    const diaAtual = hoje.getDate()
+
+    if (mesAtual < mes || (mesAtual === mes && diaAtual < dia)) {
+      idade--
+    }
+    return idade
+  }
+
   // Formata a data para ser exibida no padrão brasileiro
   function formatarData(dataIso) {
-    if (!dataIso) return '-';
+    if (!dataIso) return '-'
 
-    // Garante que é string e divide com segurança
-    const dataPura = String(dataIso).split('T')[0];
-    const partes = dataPura.split('-');
+    const dataPura = String(dataIso).split('T')[0]
+    const partes = dataPura.split('-')
 
-    if (partes.length !== 3) return '';
+    if (partes.length !== 3) return ''
 
-    const [ano, mes, dia] = partes;
-    return `${dia}/${mes}/${ano}`;
+    const [ano, mes, dia] = partes
+    return `${dia}/${mes}/${ano}`
   }
-  
+
   function formatarTelefone(telefone) {
-    if (!telefone) return '';
+    if (!telefone) return ''
 
-    const apenasNumeros = String(telefone).replace(/\D/g, '');
+    const apenasNumeros = String(telefone).replace(/\D/g, '')
 
-    // Valida se possui o DDD + número (10 dígitos para fixo ou 11 para celular)
     if (apenasNumeros.length === 11) {
-      return apenasNumeros.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+      return apenasNumeros.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
     }
 
     if (apenasNumeros.length === 10) {
-      return apenasNumeros.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+      return apenasNumeros.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3')
     }
 
-    return telefone;
+    return telefone
   }
 
-    function formatarCPF(cpf) {
-    if (!cpf) return '';
+  function formatarCPF(cpf) {
+    if (!cpf) return ''
 
-    const apenasNumeros = String(cpf).replace(/\D/g, '');
+    const apenasNumeros = String(cpf).replace(/\D/g, '')
 
     if (apenasNumeros.length === 11) {
-      return apenasNumeros.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+      return apenasNumeros.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
     }
 
-    return cpf;
+    return cpf
   }
 
   // 1. BUSCAR MEMBROS AO CARREGAR A PÁGINA (GET /membros)
@@ -66,8 +91,6 @@ function Membros() {
     try {
       setCarregando(true)
       const resposta = await api.get('/membros')
-
-      console.log('Membros recebidos do backend:', resposta.data)
 
       const dadosRecebidos = Array.isArray(resposta.data)
         ? resposta.data
@@ -102,11 +125,12 @@ function Membros() {
 
   // Abre o modal para edição de um membro existente
   function abrirModalEdicao(membro) {
+    const dataNasc = membro.data_nascimento || membro.dataNascimento
     setMembroEmEdicao(membro)
     setNome(membro.nome || '')
     setCpf(membro.cpf || '')
-    setDataNascimento(membro.dataNascimento ? membro.dataNascimento.split('T')[0] : '')
-    setEstadoCivil(membro.estadoCivil || 'Solteiro')
+    setDataNascimento(dataNasc ? String(dataNasc).split('T')[0] : '')
+    setEstadoCivil(membro.estado_civil || membro.estadoCivil || 'Solteiro')
     setSexo(membro.sexo || 'Masculino')
     setTelefone(membro.telefone || '')
     setFilhos(membro.filhos !== undefined ? membro.filhos : 0)
@@ -139,17 +163,15 @@ function Membros() {
 
     try {
       if (membroEmEdicao) {
-        // Endpoint de Update (PUT /membros/:id)
         await api.put(`/membros/${membroEmEdicao.id || membroEmEdicao.membro_id}`, dadosPayload)
         alert('Membro atualizado com sucesso!')
       } else {
-        // Endpoint de Create (POST /membros)
         await api.post('/membros', dadosPayload)
         alert('Membro cadastrado com sucesso!')
       }
 
       setModalAberto(false)
-      carregarMembros() // Recarrega a listagem atualizada
+      carregarMembros()
     } catch (erro) {
       console.error('Erro ao salvar membro:', erro)
       alert(erro.response?.data?.erro || 'Erro ao processar a operação.')
@@ -172,13 +194,64 @@ function Membros() {
     }
   }
 
+  function limparFiltros() {
+    setFiltroNome('')
+    setFiltroIdadeMin('')
+    setFiltroIdadeMax('')
+    setFiltroEstadoCivil('todos')
+    setFiltroSexo('todos')
+  }
+
+  // Lista filtrada por nome, idade (mín e máx), estado civil e sexo
+  const membrosFiltrados = useMemo(() => {
+    const termoNome = filtroNome.trim().toLowerCase()
+    const min = filtroIdadeMin !== '' ? Number(filtroIdadeMin) : null
+    const max = filtroIdadeMax !== '' ? Number(filtroIdadeMax) : null
+
+    return membros.filter((membro) => {
+      const matchNome =
+        !termoNome || String(membro.nome || '').toLowerCase().includes(termoNome)
+
+      const idade = calcularIdade(membro.data_nascimento || membro.dataNascimento)
+      const matchIdadeMin = min === null || (idade !== null && idade >= min)
+      const matchIdadeMax = max === null || (idade !== null && idade <= max)
+
+      const estCivilMembro = membro.estado_civil || membro.estadoCivil || ''
+      const matchEstadoCivil =
+        filtroEstadoCivil === 'todos' || estCivilMembro === filtroEstadoCivil
+
+      const matchSexo = filtroSexo === 'todos' || membro.sexo === filtroSexo
+
+      return matchNome && matchIdadeMin && matchIdadeMax && matchEstadoCivil && matchSexo
+    })
+  }, [membros, filtroNome, filtroIdadeMin, filtroIdadeMax, filtroEstadoCivil, filtroSexo])
+
   const mesAtual = new Date().getMonth() + 1
   const aniversariantesDoMes = membros.filter((membro) => {
     const dataNasc = membro.dataNascimento || membro.data_nascimento
     if (!dataNasc) return false
-    const mes = parseInt(dataNasc.split('T')[0].split('-')[1], 10)
+    const mes = parseInt(String(dataNasc).split('T')[0].split('-')[1], 10)
     return mes === mesAtual
   }).length
+
+  const {
+    paginaAtual,
+    setPaginaAtual,
+    totalPaginas,
+    totalItens,
+    itensPaginados: membrosPaginados,
+  } = usePaginacao(membrosFiltrados, 10)
+
+  useEffect(() => {
+    setPaginaAtual(1)
+  }, [
+    filtroNome,
+    filtroIdadeMin,
+    filtroIdadeMax,
+    filtroEstadoCivil,
+    filtroSexo,
+    setPaginaAtual
+  ])
 
   return (
     <main className="membros-page">
@@ -186,7 +259,7 @@ function Membros() {
         <div>
           <span className="page-label">GESTÃO INSTITUCIONAL</span>
           <h1>Membros</h1>
-          <p>Gerencie o cadastro de membros da comunidade.</p>
+          <p>Gerencie o cadastro de membros da CELC.</p>
         </div>
 
         <button
@@ -200,7 +273,6 @@ function Membros() {
       </header>
 
       <section className="membros-resumo">
-
         <article className="membro-resumo-card">
           <div className="membro-resumo-icon">
             <Users size={22} />
@@ -219,7 +291,6 @@ function Membros() {
             <small>Total de membro(s) de aniversário este mês</small>
           </div>
         </article>
-
       </section>
 
       <section className="membros-lista-section">
@@ -228,6 +299,82 @@ function Membros() {
             <h2>Membros Cadastrados</h2>
             <p>Consulte e gerencie as informações pessoais dos membros.</p>
           </div>
+        </div>
+
+        <div className="membros-filtros">
+          <div className="membros-filtro-campo membros-filtro-nome">
+            <label htmlFor="filtro-nome">Nome</label>
+            <input
+              id="filtro-nome"
+              type="text"
+              placeholder="Buscar por nome..."
+              value={filtroNome}
+              onChange={(e) => setFiltroNome(e.target.value)}
+            />
+          </div>
+
+          <div className="membros-filtro-campo membros-filtro-idade">
+            <label htmlFor="filtro-idade-min">Idade mín.</label>
+            <input
+              id="filtro-idade-min"
+              type="number"
+              min="0"
+              max="130"
+              placeholder="Ex.: 18"
+              value={filtroIdadeMin}
+              onChange={(e) => setFiltroIdadeMin(e.target.value)}
+            />
+          </div>
+
+          <div className="membros-filtro-campo membros-filtro-idade">
+            <label htmlFor="filtro-idade-max">Idade máx.</label>
+            <input
+              id="filtro-idade-max"
+              type="number"
+              min="0"
+              max="130"
+              placeholder="Ex.: 60"
+              value={filtroIdadeMax}
+              onChange={(e) => setFiltroIdadeMax(e.target.value)}
+            />
+          </div>
+
+          <div className="membros-filtro-campo">
+            <label htmlFor="filtro-estado-civil">Estado Civil</label>
+            <select
+              id="filtro-estado-civil"
+              value={filtroEstadoCivil}
+              onChange={(e) => setFiltroEstadoCivil(e.target.value)}
+            >
+              <option value="todos">Todos</option>
+              <option value="Solteiro">Solteiro</option>
+              <option value="Casado">Casado</option>
+              <option value="Separado">Separado</option>
+              <option value="Divorciado">Divorciado</option>
+              <option value="Viúvo">Viúvo</option>
+            </select>
+          </div>
+
+          <div className="membros-filtro-campo">
+            <label htmlFor="filtro-sexo">Sexo</label>
+            <select
+              id="filtro-sexo"
+              value={filtroSexo}
+              onChange={(e) => setFiltroSexo(e.target.value)}
+            >
+              <option value="todos">Todos</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+            </select>
+          </div>
+
+          <button
+            type="button"
+            className="limpar-filtros-button"
+            onClick={limparFiltros}
+          >
+            Limpar
+          </button>
         </div>
 
         <div className="membros-table-wrapper">
@@ -246,13 +393,12 @@ function Membros() {
             </thead>
 
             <tbody>
-              {/* Lista de membros */}
               {carregando ? (
                 <tr>
-                  <td colSpan="8" className="membros-vazios">A carregar membros...</td>
+                  <td colSpan="8" className="membros-vazios">Carregando os membros...</td>
                 </tr>
               ) : (
-                Array.isArray(membros) && membros.map((membro) => (
+                membrosPaginados.map((membro) => (
                   <tr key={membro.id || membro.membro_id}>
                     <td>{membro.nome}</td>
                     <td>{formatarCPF(membro.cpf)}</td>
@@ -285,15 +431,24 @@ function Membros() {
                 ))
               )}
 
-              {!carregando && (!Array.isArray(membros) || membros.length === 0) && (
+              {!carregando && membrosFiltrados.length === 0 && (
                 <tr>
                   <td colSpan="8" className="membros-vazios">
-                    Nenhum membro cadastrado.
+                    {membros.length === 0
+                      ? 'Nenhum membro cadastrado.'
+                      : 'Nenhum membro encontrado com os filtros aplicados.'}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+
+          <Paginacao
+            paginaAtual={paginaAtual}
+            totalPaginas={totalPaginas}
+            totalItens={totalItens}
+            onMudarPagina={setPaginaAtual}
+          />
         </div>
       </section>
 
