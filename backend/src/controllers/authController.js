@@ -1,6 +1,6 @@
 const authModel = require('../models/authModel');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const authController = {
   async login(req, res) {
@@ -44,7 +44,7 @@ const authController = {
       res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         path: '/',
         maxAge: 8 * 60 * 60 * 1000
       });
@@ -73,7 +73,7 @@ const authController = {
     res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/'
     });
 
