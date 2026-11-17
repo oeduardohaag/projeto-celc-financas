@@ -46,7 +46,10 @@ const MembroModel = {
     },
 
     async deletarMembro(id) {
-        const query = `DELETE FROM membros WHERE id = $1;`;
+        const query = `
+            DELETE FROM membros WHERE id = $1 
+            RETURNING *;
+        `;
         const result = await pool.query(query, [id]);
         return result.rows[0];
     }
