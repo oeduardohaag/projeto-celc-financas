@@ -52,29 +52,27 @@
 }
 
 @keyframes loginEntrada {
-  from { opacity: 0; transform: translateY(16px) scale(.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.logo-celc-financas {
+  display: block;
+  width: 70px;
+  height: auto;
+  margin: 0 auto 1rem;
 }
 
 .login-header {
   margin-bottom: 1.75rem;
   text-align: center;
-}
-
-/* "logo" dourado acima do título */
-.login-header::before {
-  content: "C";
-  display: grid;
-  place-items: center;
-  width: 58px;
-  height: 58px;
-  margin: 0 auto 1rem;
-  border-radius: 16px;
-  background: var(--gold-gradient);
-  color: var(--black);
-  font-size: 1.8rem;
-  font-weight: 800;
-  box-shadow: 0 8px 20px rgba(168, 134, 31, .4);
 }
 
 .login-header h1 {

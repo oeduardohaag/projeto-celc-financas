@@ -37,6 +37,7 @@ function Login({ onEntrar }) {
   return (
     <main className="login-page">
       <div className="login-card">
+          <img className="logo-celc-financas" src="/celc-financas-icon.png" alt="CELC Finanças"/>
         <header className="login-header">
           <h1>CELC Finanças</h1>
           <p>Faça login para acessar o sistema</p>
