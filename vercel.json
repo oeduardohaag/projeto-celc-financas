@@ -19,15 +19,7 @@
       "destination": { "service": "backend" }
     },
     {
-      "source": "/membros",
-      "destination": { "service": "backend" }
-    },
-    {
       "source": "/contas/(.*)",
-      "destination": { "service": "backend" }
-    },
-    {
-      "source": "/contas",
       "destination": { "service": "backend" }
     },
     {
