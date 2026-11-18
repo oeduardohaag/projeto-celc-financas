@@ -194,7 +194,7 @@ function Relatorios() {
       totaisPorMes: totaisMes,
       totalGeralMembros: totalGeral
     }
-  }, [contas, membros, anoMatriz, categoriaSelecionada, origemSelecionada])
+  }, [contas, membros, anoMatriz, origemSelecionada])
 
   const {
     paginaAtual,
