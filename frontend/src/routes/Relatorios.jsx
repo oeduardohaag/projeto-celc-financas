@@ -229,17 +229,17 @@ function Relatorios() {
             <select
               id="filtro-ano"
               value={anoSelecionado}
-              onChange={(evento) => setMesSelecionado(evento.target.value)}
+              onChange={(evento) => setAnoSelecionado(evento.target.value)}
             >
-              <option value="todos">Todos os meses</option>
-              {anos.map((ano) => (
-                <option key={ano.valor} value={ano.valor}>
-                  {ano.nome}
+              <option value="todos">Todos os anos</option>
+              {anosDisponiveis.map((ano) => (
+                <option key={ano} value={ano}>
+                  {ano}
                 </option>
               ))}
             </select>
           </div>
-          
+
           <div className="relatorios-campo">
             <label htmlFor="filtro-mes">Mês</label>
             <select
