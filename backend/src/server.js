@@ -34,9 +34,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(apiLimiter);
 
-app.use('/auth', authRoutes);
-app.use('/membros', membrosRoutes);
-app.use('/contas', contasRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/membros', membrosRoutes);
+app.use('/api/contas', contasRoutes);
 
 app.get('/', (req, res) => {
   res.json({ status: 'sucesso', mensagem: 'API do CELC Finanças funcionando!' });
