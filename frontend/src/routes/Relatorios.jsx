@@ -25,6 +25,7 @@ function Relatorios() {
   const [carregando, setCarregando] = useState(false)
 
   // Filtros gerais
+  const [anoSelecionado, setAnoSelecionado] = useState('todos')
   const [mesSelecionado, setMesSelecionado] = useState('todos')
   const [classificacaoSelecionada, setClassificacaoSelecionada] = useState('todas')
   const [categoriaSelecionada, setCategoriaSelecionada] = useState('todas')
@@ -71,6 +72,7 @@ function Relatorios() {
   }
 
   function limparFiltros() {
+    setAnoSelecionado('todos')
     setMesSelecionado('todos')
     setClassificacaoSelecionada('todas')
     setCategoriaSelecionada('todas')
@@ -96,8 +98,10 @@ function Relatorios() {
 
   const contasFiltradas = contas.filter((conta) => {
     const dataRef = conta.data_vencimento || conta.data_pgto || ''
+    const anoConta = dataRef ? String(dataRef).split('T')[0].split('-')[0] : ''
     const mesConta = dataRef ? String(dataRef).split('T')[0].split('-')[1] : ''
 
+    const matchAno = anoSelecionado === 'todos' || anoConta === anoSelecionado
     const matchMes = mesSelecionado === 'todos' || mesConta === mesSelecionado
     const matchClassificacao =
       classificacaoSelecionada === 'todas' || conta.classificacao === classificacaoSelecionada
@@ -106,7 +110,7 @@ function Relatorios() {
     const matchOrigem =
       origemSelecionada === 'todas' || conta.origem === origemSelecionada
 
-    return matchMes && matchClassificacao && matchCategoria && matchOrigem
+    return matchAno && matchMes && matchClassificacao && matchCategoria && matchOrigem
   })
 
   const totalReceitas = contasFiltradas
@@ -220,6 +224,22 @@ function Relatorios() {
         <h2>Resumo financeiro</h2>
 
         <div className="relatorios-filtros">
+          <div className="relatorios-campo">
+            <label htmlFor="filtro-ano">Ano</label>
+            <select
+              id="filtro-ano"
+              value={anoSelecionado}
+              onChange={(evento) => setMesSelecionado(evento.target.value)}
+            >
+              <option value="todos">Todos os meses</option>
+              {anos.map((ano) => (
+                <option key={ano.valor} value={ano.valor}>
+                  {ano.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+          
           <div className="relatorios-campo">
             <label htmlFor="filtro-mes">Mês</label>
             <select
