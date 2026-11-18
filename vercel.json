@@ -16,7 +16,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": { "service": "frontend" }
+      "destination": { "service": "frontend", "path": "/index.html" }
     }
   ]
-}
+} 
